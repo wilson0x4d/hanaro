@@ -81,4 +81,4 @@ Consider this "naive" example:
     # ..etc..
     #
 
-As a final note; in the future a component responsible for collecting and dumping queued logging records may be added, especially if it is requested or the Community submits a PR for review. Currently we establish writers on an as-needed basis so one is not provided.
+As a final note; in the future a component responsible for writing queued logging Records may be added, especially if it is requested or someone submits a PR for review. Currently we establish writers on an as-needed basis so one is not provided.

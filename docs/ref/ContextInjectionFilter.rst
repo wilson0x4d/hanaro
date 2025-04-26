@@ -3,9 +3,6 @@ ContextInjectionFilter
 
 Facilitates injecting attributes into logging Records.
 
-Initialization
---------------
-
 .. py:currentmodule:: hanaro
 
 .. py:class:: ContextInjectionFilter(context, isMetadata, metadataName)
