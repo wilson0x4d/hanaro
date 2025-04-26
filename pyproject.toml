@@ -1,0 +1,37 @@
+[project]
+name = "hanaro"
+version = "0.0.0"
+description = "A non-invasive `logging` configurator and facilitator."
+keywords = ["logging", "configuration", "appsettings2", "async"]
+authors = [
+    { name="Shaun Wilson", email="mrshaunwilson@msn.com" }
+]
+readme = "README.md"
+requires-python = ">=3.12"
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Intended Audience :: Developers"
+]
+
+[project.urls]
+Documentation = "https://hanaro.readthedocs.io/"
+Homepage = "https://github.com/wilson0x4d/hanaro"
+Repository = "https://github.com/wilson0x4d/hanaro.git"
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+exclude = [
+    "docs",
+    "tests",
+    "tests.*",
+    ".scripts",
+    ".gitea",
+    ".venv-*"
+]

@@ -1,0 +1,12 @@
+__pycache__
+.vscode/
+.venv/
+.venv-bash/
+.venv-pwsh/
+.DS_Store
+build/
+dist/
+*.egg-info/
+docs/_build/
+*.xml
+*.html
