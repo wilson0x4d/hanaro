@@ -9,8 +9,8 @@ on:
     paths:
     - 'hanaro/**'
     - 'pyproject.toml'
-    - 'README.md'
-    - 'docs/**'
+    - '!README.md'
+    - '!docs/**'
     - '.gitea/workflows/pipeline.yaml'
 jobs:
   publish:
