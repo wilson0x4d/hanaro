@@ -39,7 +39,6 @@ Each filter configuration has the following structure and options:
     }
 
 .. list-table::
-    :widths: 25 50
     :header-rows: 0
 
     * - ``source``
@@ -52,7 +51,7 @@ Each filter configuration has the following structure and options:
 Notes on Regex Support
 ----------------------
 
-The regex support is Python's own pattern matching library (aka. `re`).
+The regex support is Python's own pattern matching library (aka. ``re``).
 
 Provided regexes are clamped on the left and right side, ie. `^` and `$` specifiers are automatically applied. Thus, if you provide a value of ``'test'`` the resulting regex looks like ``'^test$'``.
 
