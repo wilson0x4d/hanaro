@@ -34,7 +34,7 @@ Each filter configuration has the following structure and options:
 .. code:: javascript
 
     "source": {
-        "level": 'DEBUG'|'INFO'|'WARN'|'WARNING'|'ERROR'|'FATAL'|'CRITICAL',
+        "level": 'DEBUG'|'INFO'|'WARNING'|'ERROR'|'CRITICAL',
         "regex": true|false
     }
 
@@ -44,9 +44,9 @@ Each filter configuration has the following structure and options:
     * - ``source``
       - **REQUIRED** The name of the Logger to filter, can be an exact match or a regex.
     * - ``level``
-      - **OPTIONAL** The minimum logging Level required for logging Records to bypass the filter. Default is ``DEBUG``.
+      - **OPTIONAL** The minimum logging Level required for logging Records to bypass the filter.<br/>Default is ``DEBUG``.
     * - ``regex``
-      - **OPTIONAL** ``true`` if ``source`` is a regex, otherwise ``source`` is a literal string value. Default is ``true``.
+      - **OPTIONAL** ``true`` if ``source`` is a regex, otherwise ``source`` is a literal string value.<br/>Default is ``true``.
 
 Notes on Regex Support
 ----------------------
