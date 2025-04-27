@@ -47,13 +47,13 @@ Let's try a "learn by example" approach. The following two snippets are the cont
             "asyncio": {
                 "level": "WARNING"
             },
-            "mysql.connector": {
+            "mysql.*": {
                 "level": "WARNING"
             },
-            "urllib3.connectionpool": {
+            "urllib3.*": {
                 "level": "WARNING"
             },
-            "websockets.client": {
+            "websockets.*": {
                 "level": "WARNING"
             }
         }
@@ -86,7 +86,7 @@ When executed the program outputs the following:
 Things not obvious given the example above:
 
 * All configuration options are optional, you can reduce the config to specifying only those things you wish to customize.
-* It is not necessary to load a configuration at all, a call to `configureLogging()` will still apply reasonable defaults such as adding a console handler, applying a line format, applying a default date format (ISO 9601), etc.
+* It is not necessary to load a configuration at all, a call to `configureLogging()` will still apply reasonable defaults such as adding a console handler, applying a line format, applying a default date format (ISO 8601), etc.
 * If no handlers are configured, a default handler for "console" is configured.
 
 **hanaro** only has a single direct dependency: [``appsettings2``](https://pypi.org/project/appsettings2/).
