@@ -1,5 +1,5 @@
-# SPDX-License-Identifier: COPYRIGHT
 # SPDX-FileCopyrightText: Copyright (C) Shaun Wilson
+# SPDX-License-Identifier: MIT
 
 import logging
 from punit import *
