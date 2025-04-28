@@ -91,12 +91,36 @@ def configureLogging(config:appsettings2.Configuration = None) -> list[logging.H
     logger = logging.getLogger(__name__)
     return handlers
 
-def getQueuedLogger(name:str) -> logging.Logger:
-    logger = logging.Logger(name)
+def getLogger(name:str = None, level:int|str = logging.NOTSET) -> logging.Logger:
+    """
+    Similar to Python's own ``logging.getLogger(...)`` except this function attempts to resolve the name of the calling module when no name has been provided.
+
+    :param str name: (OPTIONAL) The name for the logger instance. When not provided an attempt will be made to resolve the name of the calling module. Default is ``None``.
+    :param int|str level: (OPTIONAL) The default logging Level for the Logger. Default is ```NOTSET```.
+    :returns: A ``logging.Logger`` instance that only has a :py:class:`~hanaro.QueuedHandler` configured.    
+    """
+    if name is None:
+        import inspect
+        name = inspect.currentframe().f_back.f_globals.get('__name__', None)
+    return logging.Logger(name, level)
+
+def getQueuedLogger(name:str = None, level:int|str = logging.NOTSET) -> logging.Logger:
+    """
+    Similar to Python's own ``logging.getLogger(...)`` except this function provides a bare-bones Logger that is only configured to forward logging Records to a :py:class:`~hanaro.QueuedHandler` (intentionally bypassing the rest of the logging system.)
+
+    :param str name: (OPTIONAL) The name for the logger instance. When not provided an attempt will be made to resolve the name of the calling module. Default is ``None``.
+    :param int|str level: (OPTIONAL) The default logging Level for the Logger. Default is ```NOTSET```.
+    :returns: A ``logging.Logger`` instance that only has a :py:class:`~hanaro.QueuedHandler` configured.    
+    """
+    if name is None:
+        import inspect
+        name = inspect.currentframe().f_back.f_globals.get('__name__', None)
+    logger = logging.Logger(name, level)
     logger.addHandler(QueuedHandler())
     return logger
 
 __all__ = [
     'configureLogging',
+    'getLogger',
     'getQueuedLogger'
 ]

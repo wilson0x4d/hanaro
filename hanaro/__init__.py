@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: Copyright (C) Shaun Wilson
 # SPDX-License-Identifier: MIT
 
-from .utils import configureLogging, getQueuedLogger
+from .utils import configureLogging, getLogger, getQueuedLogger
 from .ConfigFilter import ConfigFilter
 from .ContextInjectionFilter import ContextInjectionFilter
 from .QueuedHandler import QueuedHandler
@@ -15,6 +15,7 @@ __all__ = [
     'ConfigFilter',
     'ContextInjectionFilter',
     'configureLogging',
+    'getLogger',
     'getQueuedLogger',
     'QueuedHandler',
     'utils'
