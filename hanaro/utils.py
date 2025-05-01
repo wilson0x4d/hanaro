@@ -102,7 +102,10 @@ def getLogger(name:str = None, level:int|str = logging.NOTSET) -> logging.Logger
     if name is None:
         import inspect
         name = inspect.currentframe().f_back.f_globals.get('__name__', None)
-    return logging.Logger(name, level)
+    logger = logging.getLogger(name)
+    if level != logging.NOTSET:
+        logger.setLevel(level)
+    return logger
 
 def getQueuedLogger(name:str = None, level:int|str = logging.NOTSET) -> logging.Logger:
     """
