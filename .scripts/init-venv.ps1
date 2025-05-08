@@ -9,5 +9,9 @@ if ($env:PYTHON_VERSION -ne "") {
 }
 & $PYPATH -m venv --prompt "hanaro" .venv-pwsh
 . .\.venv-pwsh\Scripts\Activate.ps1
-& python -m pip install -r requirements-dev.txt
+& pip install pip-tools
+& pip-compile -o requirements.txt --all-extras --strip-extras pyproject.toml
+& pip install -r requirements.txt
+rm requirements.txt
+rm -R -Force hanaro.egg-info
 deactivate

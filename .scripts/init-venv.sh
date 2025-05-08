@@ -9,10 +9,9 @@ else
 fi
 $PYPATH -m venv --prompt "hanaro" .venv-bash
 source .venv-bash/bin/activate
-if [ -f requirements-dev.txt ]; then
-    pip install -r requirements-dev.txt
-fi
-if ! [ -f requirements-dev.txt ]; then
-    pip install -r requirements.txt
-fi
+pip install pip-tools
+pip-compile -o requirements.txt --all-extras --strip-extras pyproject.toml > /dev/null
+pip install -r requirements.txt
+rm requirements.txt
+rm -rf hanaro.egg-info
 deactivate
