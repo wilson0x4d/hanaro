@@ -73,3 +73,31 @@ The utils module is where helper functions are located, for example ``configureL
 
     # Outputs to console:
     # (Nothing, because the logging record went into a queue.)
+    # SEE ALSO: ``handleQueuedLogRecords()``
+
+.. py:function:: handleQueuedLogRecords()
+    :canonical: hanaro.utils.handleQueuedLogRecords
+
+    Outputs all queued log records using the root logger.
+
+.. rubric:: Example:
+
+.. code:: python
+
+    import hanaro
+
+    hanaro.configureLogging({
+        'logging': {
+            'level': 'DEBUG',
+            'handlers': [{'type':'console','level':'DEBUG'}]
+        }
+    })
+
+    class Foo:
+        def __init__(self) -> None:
+            self.__logger = logging.getQueuedLogger('ur.special')
+            self.__logger.info('Hello, World!')
+            hanaro.handleQueuedLogRecords()
+    
+    # Outputs to console (depends on format spec):
+    # [2025-12-31 12:59:59] level="INFO" source="ur.special" msg="Hello, World!"

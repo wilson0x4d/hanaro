@@ -3,6 +3,7 @@
 
 import importlib
 import os
+from typing import Any, Optional
 import appsettings2
 import logging
 import logging.handlers
@@ -13,8 +14,12 @@ from .ContextInjectionFilter import ContextInjectionFilter
 from .QueuedHandler import QueuedHandler
 
 
-def configureLogging(config:appsettings2.Configuration = None) -> list[logging.Handler]:
-    config = config if config is not None else appsettings2.Configuration()
+def configureLogging(config:Optional[dict[str,Any]|appsettings2.Configuration] = None) -> list[logging.Handler]:
+    if config is not None:
+        if isinstance(config, dict):
+            config = appsettings2.Configuration.fromDictionary(config)
+    else:
+        config = appsettings2.Configuration()
     handlers = []
     defaultLevel = getattr(logging, config.get('logging__level', 'DEBUG').upper())
     defaultFormat = config.get('logging__format', logging.BASIC_FORMAT)
@@ -122,8 +127,26 @@ def getQueuedLogger(name:str = None, level:int|str = logging.NOTSET) -> logging.
     logger.addHandler(QueuedHandler())
     return logger
 
+def handleQueuedLogRecords() -> None:
+    """
+    Outputs all queued log records using the root logger.
+
+    This is a QOL function for devs using `getQueuedLogger`.
+
+    ```python
+    while not exitProgram:
+        doProgramLogic()
+        handleQueuedLogRecords()
+    ```
+
+    This function must be called on the main thread. Calling from any other thread will have undefined behavior and is not supported.
+    """
+    while (logRecord := QueuedHandler.getLogRecord()) is not None:
+        logging.root.callHandlers(logRecord)
+
 __all__ = [
     'configureLogging',
     'getLogger',
-    'getQueuedLogger'
+    'getQueuedLogger',
+    'handleQueuedLogRecords'
 ]
