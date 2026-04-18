@@ -1,8 +1,7 @@
 __pycache__
 .vscode/
+.venv-*/
 .venv/
-.venv-bash/
-.venv-pwsh/
 .DS_Store
 build/
 dist/
@@ -10,4 +9,5 @@ dist/
 docs/_build/
 *.xml
 *.html
-requirements.txt
+requirement*.txt
+.mypy_cache

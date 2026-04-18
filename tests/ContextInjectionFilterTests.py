@@ -1,8 +1,8 @@
-# SPDX-FileCopyrightText: Copyright (C) Shaun Wilson
+# SPDX-FileCopyrightText: © 2025 Shaun Wilson
 # SPDX-License-Identifier: MIT
 
 import logging
-from punit import *
+from punit import fact
 from hanaro import ContextInjectionFilter
 
 @fact

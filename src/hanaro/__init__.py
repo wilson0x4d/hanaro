@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (C) Shaun Wilson
+# SPDX-FileCopyrightText: © 2025 Shaun Wilson
 # SPDX-License-Identifier: MIT
 
 from .utils import configureLogging, getLogger, getQueuedLogger
@@ -9,7 +9,6 @@ from . import utils
 
 __version__ = '0.0.0'
 __commit__ = '0abc123'
-
 __all__ = [
     '__version__', '__commit__',
     'ConfigFilter',

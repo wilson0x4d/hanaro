@@ -1,9 +1,9 @@
-# SPDX-FileCopyrightText: Copyright (C) Shaun Wilson
+# SPDX-FileCopyrightText: © 2025 Shaun Wilson
 # SPDX-License-Identifier: MIT
 
 import importlib
 import os
-from typing import Any, Optional
+from typing import Any, Optional, cast
 import appsettings2
 import logging
 import logging.handlers
@@ -96,7 +96,7 @@ def configureLogging(config:Optional[dict[str,Any]|appsettings2.Configuration] =
     logger = logging.getLogger(__name__)
     return handlers
 
-def getLogger(name:str = None, level:int|str = logging.NOTSET) -> logging.Logger:
+def getLogger(name:Optional[str] = None, level:int|str = logging.NOTSET) -> logging.Logger:
     """
     Similar to Python's own ``logging.getLogger(...)`` except this function attempts to resolve the name of the calling module when no name has been provided.
 
@@ -106,13 +106,14 @@ def getLogger(name:str = None, level:int|str = logging.NOTSET) -> logging.Logger
     """
     if name is None:
         import inspect
-        name = inspect.currentframe().f_back.f_globals.get('__name__', None)
+        f = inspect.currentframe()
+        name = None if f is None or f.f_back is None else f.f_back.f_globals.get('__name__', None)
     logger = logging.getLogger(name)
     if level != logging.NOTSET:
         logger.setLevel(level)
     return logger
 
-def getQueuedLogger(name:str = None, level:int|str = logging.NOTSET) -> logging.Logger:
+def getQueuedLogger(name:Optional[str] = None, level:int|str = logging.NOTSET) -> logging.Logger:
     """
     Similar to Python's own ``logging.getLogger(...)`` except this function provides a bare-bones Logger that is only configured to forward logging Records to a :py:class:`~hanaro.QueuedHandler` (intentionally bypassing the rest of the logging system.)
 
@@ -122,8 +123,9 @@ def getQueuedLogger(name:str = None, level:int|str = logging.NOTSET) -> logging.
     """
     if name is None:
         import inspect
-        name = inspect.currentframe().f_back.f_globals.get('__name__', None)
-    logger = logging.Logger(name, level)
+        f = inspect.currentframe()
+        name = 'root' if f is None or f.f_back is None else f.f_back.f_globals.get('__name__', 'root')
+    logger = logging.Logger(cast(str,name), level)
     logger.addHandler(QueuedHandler())
     return logger
 

@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (C) Shaun Wilson
+# SPDX-FileCopyrightText: © 2025 Shaun Wilson
 # SPDX-License-Identifier: MIT
 
 import logging
@@ -17,7 +17,7 @@ class QueuedHandler(logging.Handler):
 
     @staticmethod
     def getLogRecord() -> logging.LogRecord|None:
-        record:logging.LogRecord = None
+        record:logging.LogRecord|None = None
         try:
              record = QueuedHandler.__s_queue.get_nowait()
         except:

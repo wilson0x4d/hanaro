@@ -1,5 +1,5 @@
 #!/bin/pwsh
-# SPDX-FileCopyrightText: Copyright (C) Shaun Wilson
+# SPDX-FileCopyrightText: © 2025 Shaun Wilson
 # SPDX-License-Identifier: MIT
 $ErrorActionPreference = "Stop"
 if ($env:PYTHON_VERSION -ne "") {

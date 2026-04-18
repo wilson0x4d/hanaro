@@ -1,23 +1,27 @@
-# SPDX-FileCopyrightText: Copyright (C) Shaun Wilson
+# SPDX-FileCopyrightText: © 2025 Shaun Wilson
 # SPDX-License-Identifier: MIT
 
 import logging
 import re
+from typing import Optional
 
 
 class ContextInjectionFilter(logging.Filter):
 
-    def __init__(self, context:dict[str,str] = None, isMetadata:bool = False, metadataName:str = 'metadata'):
+    def __init__(self, context:Optional[dict[str,str]] = None, isMetadata:bool = False, metadataName:str = 'metadata'):
         self.__context = context if context is not None else {}
         self.__isMetadata = isMetadata
         self.__metadataName = metadataName if metadataName is not None and len(metadataName) > 0 else 'metadata'
         super().__init__()
 
     def __getitem__(self, key:str) -> str|None:
-        self.__context.get(key, None)
+        return self.__context.get(key, None)
 
-    def __setitem__(self, key:str, value:str|None) -> None:        
-        self.__context[key] = value
+    def __setitem__(self, key:str, value:str|None) -> None:
+        if value is None:
+            del self.__context[key]
+        else:
+            self.__context[key] = value
 
     def __delitem__(self, key:str) -> None:
         self.__context.pop(key, None)
