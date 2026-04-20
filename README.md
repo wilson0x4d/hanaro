@@ -20,7 +20,7 @@ Let's try a "learn by example" approach. The following two snippets are the cont
 {
     "logging": {
         "level": "INFO",
-        "format": "[%(asctime)s] %(message)s level=%(levelname)s source=%(name)s %(meta)s",
+        "format": "[%(asctime)s] %(message)s level=%(levelname)s source=%(name)s %(metadata)s",
         "datefmt": "%Y-%m-%dT%H:%M:%S",
         "handlers": [
             {
@@ -34,13 +34,13 @@ Let's try a "learn by example" approach. The following two snippets are the cont
                 "name": "debug.log",
                 "max_size": "4KiB",
                 "max_count": 10,
-                "format": "[%(asctime)s] level=%(levelname)s %(message)s source=\"%(name)s\" func=\"%(funcName)s\" %(meta)s"
+                "format": "[%(asctime)s] level=%(levelname)s %(message)s source=\"%(name)s\" func=\"%(funcName)s\" %(metadata)s"
             },
             {
                 "type": "custom",
-                "canonical": "myapp.mymodule.myhandler",
+                "class": "myapp.mymodule.myhandler",
                 "level": "WARNING",
-                "format": "msg=\"%(message)s\" level=\"%(levelname)s\" source=\"%(name)s\" func=\"%(funcName)s\" %(meta)s"
+                "format": "msg=\"%(message)s\" level=\"%(levelname)s\" source=\"%(name)s\" func=\"%(funcName)s\" %(metadata)s"
             }
         ],
         "filters": {
@@ -57,11 +57,11 @@ Let's try a "learn by example" approach. The following two snippets are the cont
                 "level": "WARNING"
             }
         }
-    },
+    }
 }
 ```
 
-This code sample is a minimum-viable solution. The `custom` handler above is omitted, but for the sake of demonstration know that `canonical` is the fully-qualified type name of a `logging.Handler` subclass and **hanaro** will create an instance of that class and configure as it does all other handlers.
+This code sample is a minimum-viable solution. The `custom` handler above is omitted, but for the sake of demonstration know that `class` is the fully-qualified type name of a `logging.Handler` subclass and **hanaro** will create an instance of that class and configure as it does all other handlers.
 
 ```python
 from appsettings2 import getConfiguration

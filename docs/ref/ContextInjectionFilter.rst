@@ -10,7 +10,7 @@ Facilitates injecting attributes into logging Records.
 
     :param dict[str,str] context: The context to be injected. Each key of the dictionary representing one attribute to be injected into logging Records.
     :param bool isMetadata: (OPTIONAL) Indicates that the context should be aggregated into a single ``metadata`` attribute. Default is ``False``.
-    :param str metadataName: (OPTIONAL) The name of the "meta" attribute. Default is ``metadata``.
+    :param str metadataName: (OPTIONAL) The name of the "metadata" attribute. Default is ``metadata``.
 
 What is the ``metadata`` attribute?
 -----------------------------------
