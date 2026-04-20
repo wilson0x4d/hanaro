@@ -10,6 +10,7 @@ import logging.handlers
 import sys
 import uuid
 
+from .formatters.BidiFormatter import BidiFormatter
 from .ConfigFilter import ConfigFilter
 from .ContextInjectionFilter import ContextInjectionFilter
 from .QueuedHandler import QueuedHandler
@@ -22,10 +23,12 @@ def configureLogging(config:Optional[dict[str,Any]|appsettings2.Configuration] =
     else:
         config = appsettings2.Configuration()
     handlers = []
+    defaultBidiEnabled = cast(bool, config.get('logging__bidi', True))
     defaultLevel = cast(str, config.get('logging__level', 'DEBUG')).upper()
     defaultFormat = config.get('logging__format', logging.BASIC_FORMAT)
-    filters:appsettings2.Configuration = config.get('logging__filters', None)
-    configFilter = ConfigFilter(filters.toDictionary() if filters is not None else {})
+    filter_configs:appsettings2.Configuration = config.get('logging__filters', None)
+    config_filter = ConfigFilter("config_filter", filter_configs.toDictionary() if filter_configs is not None else {})
+    bidi_formatter = BidiFormatter()
     contextInjectorFilter = ContextInjectionFilter({}, True)
     datefmt = config.get('logging__datefmt', '%Y-%m-%dT%H:%M:%S')
     # create configured handlers
@@ -41,7 +44,7 @@ def configureLogging(config:Optional[dict[str,Any]|appsettings2.Configuration] =
                     args = handler_config.get('args')
                     handler = handler_class(**(args.toDictionary() if args is not None else {}))
                 case 'console':
-                    handler = logging.StreamHandler(sys.stdout)
+                    handler = logging.StreamHandler(sys.stdout)                    
                 case 'file':
                     log_path = handler_config.get('path')
                     if log_path == None:
@@ -77,13 +80,22 @@ def configureLogging(config:Optional[dict[str,Any]|appsettings2.Configuration] =
                         backupCount = max_count)
             if handler != None:
                 handler.setLevel(getattr(logging, handler_config.get('level', defaultLevel).upper()))
-                handler.formatter = logging.Formatter(handler_config.get('format', defaultFormat), datefmt)
-                handler.addFilter(configFilter)
+                if handler.formatter is None:
+                    if defaultBidiEnabled and type(handler) is logging.StreamHandler and handler.stream is sys.stdout:
+                        handler.formatter = BidiFormatter(handler_config.get('format', defaultFormat), datefmt)
+                    else:
+                        handler.formatter = logging.Formatter(handler_config.get('format', defaultFormat), datefmt)
+                handler.addFilter(config_filter)
                 handler.addFilter(contextInjectorFilter)
                 handlers.append(handler)
     # log to stdout if no handlers configured
     if len(handlers) == 0:
-        handlers.append(logging.StreamHandler(sys.stdout))
+        handler = logging.StreamHandler(sys.stdout)
+        if defaultBidiEnabled:
+            handler.formatter = BidiFormatter(defaultFormat, datefmt)
+        else:
+            handler.formatter = logging.Formatter(defaultFormat, datefmt)
+        handlers.append(handler)
     # init
     logging.basicConfig(
         format = defaultFormat,

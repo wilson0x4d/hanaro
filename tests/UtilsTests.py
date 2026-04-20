@@ -57,7 +57,18 @@ def configureLogging_acceptsDictionaryObject() -> None:
 
 @fact
 def configureLogging_loadsAppsettingsDefault() -> None:
+    # NOTE: this configuration gives us code-coverage on default `console` logger when `bidi` is NOT explicitly disabled.
     hanaro.configureLogging()
+
+@fact
+def configureLogging_loadsPartialConfigurationObject() -> None:
+    # NOTE: this configuration gives us code-coverage on default `console` logger when `bidi` IS explicitly disabled.
+    hanaro.configureLogging({
+        "logging": {
+            "bidi": False
+        }
+    })
+
 
 @fact
 def configureLogging_loadsAppsettingsCustom() -> None:

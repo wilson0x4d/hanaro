@@ -8,6 +8,7 @@ Reference
     ConfigFilter <ConfigFilter>
     ContextInjectionFilter <ContextInjectionFilter>
     QueuedHandler <QueuedHandler>
+    formatters.* <formatters/index>
     utils.* <utils>
 
 .. automodule:: hanaro

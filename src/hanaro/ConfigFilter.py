@@ -13,7 +13,7 @@ class _ConfigFilterSettings:
     regex:bool
     source:str
 
-    def __init__(self, source:str, settings:dict[str,str]):
+    def __init__(self, source:str, settings:dict[str,str]) -> None:
         self.source = source
         s = settings.get('regex', True)
         self.regex = s == 'True' or s == True
@@ -23,9 +23,9 @@ class _ConfigFilterSettings:
 
 class ConfigFilter(logging.Filter):
 
-    def __init__(self, config:dict[str,dict[str,Any]]):
+    def __init__(self, name:str = '', config:dict[str,dict[str,Any]] = {}) -> None:
         self.__settings = [_ConfigFilterSettings(k, v) for k,v in config.items()]
-        super().__init__()
+        super().__init__(name)
 
     def filter(self, record:logging.LogRecord) -> bool:
         for e in self.__settings:

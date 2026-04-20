@@ -79,7 +79,7 @@ This code sample is a minimum-viable solution. The ``custom`` handler above is o
 
 When executed the program outputs the following:
 
-.. code:: plaintext
+.. code:: text
     
     [2025-12-31T12:34:56] Hello, World! level=INFO source=__main__ 
 

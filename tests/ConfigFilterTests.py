@@ -12,11 +12,13 @@ from hanaro import ConfigFilter
 @inlinedata(True, 'test123', 'INFO', 'test123', logging.WARNING, 'level above config (not filtered)')
 def shouldMatchSourceAndLevel(expected:bool, source:str, level:str, name:str, levelno:int, reason:str) -> None:
     record:logging.LogRecord = logging.LogRecord(name, levelno, 'pathname', 5, 'msg', None, None, None, None)
-    filter:ConfigFilter = ConfigFilter({
-        source: {
-            'level': level
-        }
-    })
+    filter:ConfigFilter = ConfigFilter(
+        "config_filter",
+        {
+            source: {
+                'level': level
+            }
+        })
     result = filter.filter(record)
     assert result == expected, reason
 
@@ -31,12 +33,14 @@ def shouldMatchSourceAndLevel(expected:bool, source:str, level:str, name:str, le
 @inlinedata(False, '.*name.*', 'test.namespace', 'matches can explicitly substring')
 def supportsRegexMatching(expected:bool, source:str, name:str, reason:str) -> None:
     record:logging.LogRecord = logging.LogRecord(name, logging.DEBUG, 'pathname', 5, 'msg', None, None, None, None)
-    filter:ConfigFilter = ConfigFilter({
-        source: {
-            'level': 'INFO',
-            'regex': True
-        }
-    })
+    filter:ConfigFilter = ConfigFilter(
+        "config_filter",
+        {
+            source: {
+                'level': 'INFO',
+                'regex': True
+            }
+        })
     result = filter.filter(record)
     assert result == expected, reason
 
@@ -46,12 +50,14 @@ def supportsRegexMatching(expected:bool, source:str, name:str, reason:str) -> No
 @inlinedata(True, 'test.*', 'test.namespace', 'regex match should fail')
 def supportsNonRegexMatching(expected:bool, source:str, name:str, reason:str) -> None:
     record:logging.LogRecord = logging.LogRecord(name, logging.DEBUG, 'pathname', 5, 'msg', None, None, None, None)
-    filter:ConfigFilter = ConfigFilter({
-        source: {
-            'level': 'INFO',
-            'regex': False
-        }
-    })
+    filter:ConfigFilter = ConfigFilter(
+        "config_filter",
+        {
+            source: {
+                'level': 'INFO',
+                'regex': False
+            }
+        })
     result = filter.filter(record)
     assert result == expected, reason
 
@@ -66,10 +72,12 @@ def supportsNonRegexMatching(expected:bool, source:str, name:str, reason:str) ->
 @inlinedata(True, logging.CRITICAL)
 def loggingLevelBasicVerification(expected:bool, levelno:int) -> None:
     record:logging.LogRecord = logging.LogRecord('test', levelno, 'pathname', 5, 'msg', None, None, None, None)
-    filter:ConfigFilter = ConfigFilter({
-        'test': {
-            'level': 'WARNING'
-        }
-    })
+    filter:ConfigFilter = ConfigFilter(
+        "config_filter",
+        {
+            'test': {
+                'level': 'WARNING'
+            }
+        })
     result = filter.filter(record)
     assert result == expected

@@ -5,7 +5,7 @@ from .utils import configureLogging, getLogger, getQueuedLogger
 from .ConfigFilter import ConfigFilter
 from .ContextInjectionFilter import ContextInjectionFilter
 from .QueuedHandler import QueuedHandler
-from . import utils
+from . import utils, formatters
 
 __version__ = '0.0.0'
 __commit__ = '0abc123'
@@ -14,6 +14,7 @@ __all__ = [
     'ConfigFilter',
     'ContextInjectionFilter',
     'configureLogging',
+    'formatters',
     'getLogger',
     'getQueuedLogger',
     'QueuedHandler',
