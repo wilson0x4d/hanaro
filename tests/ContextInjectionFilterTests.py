@@ -53,11 +53,19 @@ def contextShouldReplaceDuplicateAttributes() -> None:
     assert hasattr(record, 'metadata')
     assert getattr(record, 'metadata') == f'foo="bar1" bar="baz1"', f'expected=`foo="bar1" bar="baz1"`, actual=`{getattr(record, 'metadata')}`'
     # second filter
-    filter2:ContextInjectionFilter = ContextInjectionFilter({
-        'foo': 'bar2',
-        'bar': 'baz2',
-        'bleh': 'blah'
-    }, isMetadata=True)
+    filter2:ContextInjectionFilter = ContextInjectionFilter({}, isMetadata=True)
+    # NOTE: this is done in this way for code coverage, it is functionally identical to the above forms
+    filter2['bar'] = None
+    filter2['foo'] = 'bar2'
+    filter2['bar'] = 'baz2'
+    filter2['bleh'] = 'tmp_blah1'
+    filter2['bleh'] = None
+    assert filter2['bleh'] is None
+    filter2['bleh'] = 'tmp_blah2'
+    del filter2['bleh']
+    assert filter2['bleh'] is None
+    filter2['bleh'] = 'blah'
+    assert filter2['bleh'] == 'blah'
     result = filter2.filter(record)
     assert result == True
     assert hasattr(record, 'foo')

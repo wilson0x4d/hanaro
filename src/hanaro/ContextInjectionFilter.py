@@ -19,7 +19,8 @@ class ContextInjectionFilter(logging.Filter):
 
     def __setitem__(self, key:str, value:str|None) -> None:
         if value is None:
-            del self.__context[key]
+            if key in self.__context:
+                del self.__context[key]
         else:
             self.__context[key] = value
 

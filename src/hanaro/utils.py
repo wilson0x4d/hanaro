@@ -8,6 +8,7 @@ import appsettings2
 import logging
 import logging.handlers
 import sys
+import uuid
 
 from .ConfigFilter import ConfigFilter
 from .ContextInjectionFilter import ContextInjectionFilter
@@ -21,7 +22,7 @@ def configureLogging(config:Optional[dict[str,Any]|appsettings2.Configuration] =
     else:
         config = appsettings2.Configuration()
     handlers = []
-    defaultLevel = getattr(logging, config.get('logging__level', 'DEBUG').upper())
+    defaultLevel = cast(str, config.get('logging__level', 'DEBUG')).upper()
     defaultFormat = config.get('logging__format', logging.BASIC_FORMAT)
     filters:appsettings2.Configuration = config.get('logging__filters', None)
     configFilter = ConfigFilter(filters.toDictionary() if filters is not None else {})
@@ -40,21 +41,20 @@ def configureLogging(config:Optional[dict[str,Any]|appsettings2.Configuration] =
                     args = handler_config.get('args')
                     handler = handler_class(**(args.toDictionary() if args is not None else {}))
                 case 'console':
-                    handler = logging.StreamHandler(sys.stdout)                    
+                    handler = logging.StreamHandler(sys.stdout)
                 case 'file':
                     log_path = handler_config.get('path')
                     if log_path == None:
-                        log_path = '.'
+                        log_path = 'logs'
                     log_path = os.path.abspath(log_path)
                     os.makedirs(log_path, exist_ok=True)
                     log_name = handler_config.get('name')
-                    if log_name == None:
-                        log_name = 'adamantium.log'
+                    if log_name is None:
+                        log_name = cast(str,handler_config.get('level', f'log-{uuid.uuid4().hex}')).lower()
                     log_name = os.path.join(log_path, log_name)
-                    max_size = handler_config.get('max_size')                    
-                    if max_size == None:
-                        max_size = 4 * 1024 * 1024
-                    elif not type(max_size) is int:
+                    max_size:str|int|None = handler_config.get('max_size')
+                    max_size = max_size if max_size is not None else 4 * 1024 * 1024
+                    if type(max_size) is str:
                         size_unit = max_size[len(max_size)-3:].upper()
                         match size_unit:
                             case 'KIB':
@@ -73,7 +73,7 @@ def configureLogging(config:Optional[dict[str,Any]|appsettings2.Configuration] =
                     handler = logging.handlers.RotatingFileHandler(
                         filename = log_name,
                         encoding = 'utf-8',
-                        maxBytes = max_size,
+                        maxBytes = cast(int, max_size),
                         backupCount = max_count)
             if handler != None:
                 handler.setLevel(getattr(logging, handler_config.get('level', defaultLevel).upper()))

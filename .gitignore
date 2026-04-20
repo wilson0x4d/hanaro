@@ -11,3 +11,7 @@ docs/_build/
 *.html
 requirement*.txt
 .mypy_cache
+logs/
+*.log
+.coverage
+htmlcov/
