@@ -34,7 +34,7 @@ def recordShouldHaveMetadataInjectedWhenConfigured() -> None:
     assert hasattr(record, 'bar')
     assert getattr(record, 'bar') == 'baz'
     assert hasattr(record, 'metadata')
-    assert getattr(record, 'metadata') == f'foo="bar" bar="baz"', f'expected=`foo="bar" bar="baz"`, actual=`{getattr(record, 'metadata')}`'
+    assert getattr(record, 'metadata') == f'foo="bar" bar="baz"', f'expected=`foo="bar" bar="baz"`, actual=`{getattr(record, "metadata")}`'
 
 @fact
 def contextShouldReplaceDuplicateAttributes() -> None:
@@ -51,7 +51,7 @@ def contextShouldReplaceDuplicateAttributes() -> None:
     assert hasattr(record, 'bar')
     assert getattr(record, 'bar') == 'baz1'
     assert hasattr(record, 'metadata')
-    assert getattr(record, 'metadata') == f'foo="bar1" bar="baz1"', f'expected=`foo="bar1" bar="baz1"`, actual=`{getattr(record, 'metadata')}`'
+    assert getattr(record, 'metadata') == f'foo="bar1" bar="baz1"', f'expected=`foo="bar1" bar="baz1"`, actual=`{getattr(record, "metadata")}`'
     # second filter
     filter2:ContextInjectionFilter = ContextInjectionFilter({}, isMetadata=True)
     # NOTE: this is done in this way for code coverage, it is functionally identical to the above forms
@@ -74,5 +74,5 @@ def contextShouldReplaceDuplicateAttributes() -> None:
     assert getattr(record, 'bar') == 'baz2'
     assert hasattr(record, 'metadata')
     expected = f'foo="bar2" bar="baz2" bleh="blah"'
-    assert getattr(record, 'metadata') == expected, f'expected=`{expected}`, actual=`{getattr(record, 'metadata')}`'
+    assert getattr(record, 'metadata') == expected, f'expected=`{expected}`, actual=`{getattr(record, "metadata")}`'
 

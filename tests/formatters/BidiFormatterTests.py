@@ -17,7 +17,6 @@ except: # pragma: no cover
 @fact
 def bidiFormatter_bvt() -> None:
     fmt = f'%(message)s'
-    nonbidi_formatter = logging.Formatter(fmt)
     bidi_formatter = BidiFormatter(fmt)
     original = 'test יהוה test'
     record = logging.LogRecord('test', logging.CRITICAL, 'pathname', 123, original, {}, None, None, None)

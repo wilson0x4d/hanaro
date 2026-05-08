@@ -29,7 +29,7 @@ class ContextInjectionFilter(logging.Filter):
 
     def filter(self, record:logging.LogRecord) -> bool:
         if self.__isMetadata:
-            metadata = f' {getattr(record, self.__metadataName, '')}'
+            metadata = f' {getattr(record, self.__metadataName, "")}'
             for k,v in self.__context.items():
                 if not hasattr(record, k):
                     metadata = f'{metadata} {k}="{v}"'
