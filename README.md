@@ -1,4 +1,4 @@
-`hanaro` (하나로) is a non-invasive `logging` configurator and facilitator for Python.
+`hanaro` (하나로) is a non-invasive `logging` configurator for Python.
 
 This README is only a high-level introduction to **hanaro**. For more detailed documentation, please view the official docs at [https://hanaro.readthedocs.io](https://hanaro.readthedocs.io).
 
@@ -65,10 +65,10 @@ This code sample is a minimum-viable solution. The `custom` handler above is omi
 
 ```python
 from appsettings2 import getConfiguration
-from hanaro import configureLogging
+from hanaro import configure_logging
 import logging
 
-configureLogging(getConfiguration())
+configure_logging(getConfiguration())
 
 logger = logging.getLogger(__name__)
 
@@ -86,7 +86,7 @@ When executed the program outputs the following:
 Things not obvious given the example above:
 
 * All configuration options are optional, you can reduce the config to specifying only those things you wish to customize.
-* It is not necessary to load a configuration at all, a call to `configureLogging()` will still apply reasonable defaults such as adding a console handler, applying a line format, applying a default date format (ISO 8601), etc.
+* It is not necessary to load a configuration at all, a call to `configure_logging()` will still apply reasonable defaults such as adding a console handler, applying a line format, applying a default date format (ISO 8601), etc.
 * If no handlers are configured, a default handler for "console" is configured.
 
 **hanaro** only has a single direct dependency: [``appsettings2``](https://pypi.org/project/appsettings2/).

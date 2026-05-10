@@ -5,18 +5,20 @@ from punit import strings
 from hanaro.formatters import BidiFormatter
 import logging
 from punit import fact
-from typing import Callable, Optional
+from typing import Any, Callable, Optional
 
-bidi_fn:None = None
+bidi_fn: Optional[Callable[..., Any]] = None
 
-try: 
-    from bidi.algorithm import get_display as bidi_fn # type: ignore
-except: # pragma: no cover
+try:
+    from bidi.algorithm import get_display as bidi_fn  # type: ignore
+except Exception:  # pragma: no cover
     pass
 
+
 @fact
-def bidiFormatter_bvt() -> None:
-    fmt = f'%(message)s'
+def basic_verification_test() -> None:
+    """Perform basic verification of :class:``BidiFormatter``."""
+    fmt = '%(message)s'
     bidi_formatter = BidiFormatter(fmt)
     original = 'test יהוה test'
     record = logging.LogRecord('test', logging.CRITICAL, 'pathname', 123, original, {}, None, None, None)

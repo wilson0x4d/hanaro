@@ -1,7 +1,7 @@
 [project]
 name = "hanaro"
 version = "0.0.0"
-description = "A non-invasive `logging` configurator and facilitator."
+description = "..a non-invasive `logging` configurator."
 keywords = ["logging", "configuration", "appsettings2", "async"]
 authors = [
     { name="Shaun Wilson", email="mrshaunwilson@msn.com" }
@@ -11,18 +11,20 @@ license = {file = "LICENSE"}
 classifiers = [
     "Intended Audience :: Developers",
     "Operating System :: OS Independent",
-    "Programming Language :: Python",
-    "Topic :: Software Development :: Libraries :: Python Modules"
+    "Programming Language :: Python"
 ]
 requires-python = ">=3.11"
 dependencies = [
-    "appsettings2 (>=1.3.7)"
+    "appsettings2 (>=2.0.1)"
 ]
 
 [project.optional-dependencies]
 dev = [
     "coverage",
+    "flake8",
+    "flake8-pyproject",
     "mypy",
+    "pep8-naming",
     "punit (>=1.4.0)",
     "twine"
 ]
@@ -49,3 +51,7 @@ exclude = [
 
 [tool.setuptools.package-data]
 "hanaro" = ["py.typed"]
+
+[tool.flake8]
+max-line-length = 120
+ignore = ["D100","E501"]

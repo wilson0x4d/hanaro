@@ -2,8 +2,6 @@ Quick Start
 ============
 .. _quickstart:
 
-.. contents::
-
 Installation
 ------------
 
@@ -68,10 +66,10 @@ This code sample is a minimum-viable solution. The ``custom`` handler above is o
 .. code:: python
 
     from appsettings2 import getConfiguration
-    from hanaro import configureLogging
+    from hanaro import configure_logging
     import logging
 
-    configureLogging(getConfiguration())
+    configure_logging(getConfiguration())
 
     logger = logging.getLogger(__name__)
 

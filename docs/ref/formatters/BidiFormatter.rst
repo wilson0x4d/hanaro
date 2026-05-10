@@ -40,12 +40,12 @@ If you have `pybidi` installed but do NOT want it being applied by default, you 
 .. code:: python
 
     from appsettings2 import getConfiguration
-    from hanaro import configureLogging
+    from hanaro import configure_logging
 
     configuration = getConfiguration()
     configuration['logging__bidi'] = False
 
-    configureLogging(configuration)
+    configure_logging(configuration)
 
 Explicit Configuration
 ----------------------

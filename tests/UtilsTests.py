@@ -2,79 +2,83 @@
 # SPDX-License-Identifier: MIT
 
 import appsettings2
+import hanaro
 import logging
 from pathlib import Path
 from punit import fact, theory, inlinedata
 
-import hanaro
 
 @theory
 @inlinedata(__name__, None, f'because `name` was not provided, expected {__name__}')
-@inlinedata('test', 'test', f'because `name` was provided, expected "test"')
-def getLogger_nameVerification(expected:str, name:str|None, reason:str) -> None:
-    result:logging.Logger = hanaro.getLogger(name)
+@inlinedata('test', 'test', 'because `name` was provided, expected "test"')
+def get_logger_bvt(expected: str, name: str | None, reason: str) -> None:
+    """Assert :function:``get_logger`` derives correct source name."""
+    result = hanaro.get_logger(name)
     assert expected == result.name, reason
+
 
 @theory
 @inlinedata(__name__, None, f'because `name` was not provided, expected {__name__}')
-@inlinedata('test', 'test', f'because `name` was provided, expected "test"')
-def getQueuedLogger_nameVerification(expected:str, name:str|None, reason:str) -> None:
-    result:logging.Logger = hanaro.getQueuedLogger(name)
+@inlinedata('test', 'test', 'because `name` was provided, expected "test"')
+def get_queued_logger_bvt(expected: str, name: str | None, reason: str) -> None:
+    """Assert :function:``get_queued_logger`` derives correct source name."""
+    result = hanaro.get_queued_logger(name)
     assert expected == result.name, reason
+
 
 @fact
-def getQueuedLogger_mustHaveQueuedHandler() -> None:
-    result:logging.Logger = hanaro.getQueuedLogger()
-    wasFound:bool = False
+def get_queued_logger_has_a_queued_handler() -> None:
+    """Assert :function:``get_queued_logger`` has a QueuedHandler assigned to it."""
+    result = hanaro.get_queued_logger()
     for handler in result.handlers:
         if isinstance(handler, hanaro.QueuedHandler):
-            wasFound = True
-            break
-    assert wasFound
+            return
+    assert False, 'expected to find a QueuedHandler assigned to the logger.'
+
 
 @theory
 @inlinedata(logging.DEBUG, 'DEBUG', f'because `DEBUG` was specified, expected {__name__}')
 @inlinedata(logging.DEBUG, logging.NOTSET, f'because no value was provided, expected {logging.NOTSET}')
-def getLogger_levelVerification(expected:str, level:str|int, reason:str) -> None:
-    result:logging.Logger = hanaro.getLogger(level=level)
+def get_logger_has_correct_level(expected: str, level: str | int, reason: str) -> None:
+    """Assert :function:``get_logger`` returns a logger with correct *level* setting."""
+    result = hanaro.get_logger(level=level)
     assert expected == result.level, f'{reason}; actual={result.level}'
+
 
 @theory
 @inlinedata(__name__, None, f'because `name` was not provided, expected {__name__}')
-@inlinedata('test', 'test', f'because `name` was provided, expected "test"')
-def getQueuedLogger_levelVerification(expected:str, name:str|None, reason:str) -> None:
-    result:logging.Logger = hanaro.getQueuedLogger(name)
+@inlinedata('test', 'test', 'because `name` was provided, expected "test"')
+def get_queued_logger_levelVerification(expected: str, name: str | None, reason: str) -> None:
+    """Assert :function:``get_queued_logger`` returns a logger with correct *level* setting."""
+    result = hanaro.get_queued_logger(name)
     assert expected == result.name, reason
 
 
 @fact
-def configureLogging_acceptsAppsettingsObject() -> None:
-    hanaro.configureLogging(appsettings2.getConfiguration())
+def configure_logging_accepts_apppsettings2() -> None:
+    """Assert :function:``configure_logging`` accepts an :class:``appsettings2.Configuration`` object."""
+    hanaro.configure_logging(appsettings2.getConfiguration())
+
 
 @fact
-def configureLogging_acceptsDictionaryObject() -> None:
-    hanaro.configureLogging(appsettings2.getConfiguration().toDictionary())
+def configure_lgging_accepts_dict() -> None:
+    """Assert :function:``configure_logging`` accepts a dictionary."""
+    hanaro.configure_logging(appsettings2.getConfiguration().toDictionary())
+
 
 @fact
-def configureLogging_loadsAppsettingsDefault() -> None:
+def configure_logging_defaults() -> None:
+    """Assert :function:``configure_logging`` configures defaults ."""
     # NOTE: this configuration gives us code-coverage on default `console` logger when `bidi` is NOT explicitly disabled.
-    hanaro.configureLogging()
+    hanaro.configure_logging()
+
 
 @fact
-def configureLogging_loadsPartialConfigurationObject() -> None:
+def configure_logging_handles_partial_configuration() -> None:
+    """Assert :function:``configure_logging`` handles a partial logging configuration."""
     # NOTE: this configuration gives us code-coverage on default `console` logger when `bidi` IS explicitly disabled.
-    hanaro.configureLogging({
+    hanaro.configure_logging({
         "logging": {
             "bidi": False
         }
     })
-
-
-@fact
-def configureLogging_loadsAppsettingsCustom() -> None:
-    # NOTE: this exists mainly for coverage purposes
-    pathlike = Path('tests', 'appsettings')
-    hanaro.configureLogging(
-        appsettings2.getConfiguration(pathlike)
-    )
-

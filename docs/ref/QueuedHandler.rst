@@ -21,7 +21,7 @@ Consider this "naive" example:
 
     class MyWorker:
         def __init__(self) -> None:
-            self.__logger = harano.getQueuedLogger(self.__class__.__name__)
+            self.__logger = harano.get_queued_logger(self.__class__.__name__)
             self.__logger.addFilter(harano.ContextInjectionFilter({ 'worker_id': uuid.uuid4().hex }))
 
         def __threadmain(self) -> None:
@@ -59,7 +59,7 @@ Consider this "naive" example:
                 if len(self.__workers) < 10:
                     self.__createWorker()                
                 # write queued logs
-                while (logRecord := QueuedHandler.getLogRecord()) is not None:
+                while (logRecord := QueuedHandler.get_log_record()) is not None:
                     self.__logger.callHandlers(logRecord)
 
     app = MyApp()

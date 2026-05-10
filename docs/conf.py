@@ -8,22 +8,28 @@
 
 import os
 import sys
-PACKAGE_PARENT = '../src'
-SCRIPT_DIR = os.path.dirname(os.path.realpath(os.path.join(os.getcwd(), os.path.expanduser(__file__))))
-sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
+PROJECT_ROOT = os.path.abspath(os.path.join('..', 'src'))
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
+from hanaro import __version__
 
 project = 'hanaro'
-copyright = '2025 Shaun Wilson'
 author = 'Shaun Wilson'
-release = '0.0.0'
+copyright = f'2025 {author}'
+release = f'{__version__}'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = [
     'sphinx.ext.autodoc',
+    'sphinx.ext.autosummary',       # nice summary tables
+    'sphinx.ext.intersphinx',
+    'sphinx_autodoc_typehints',     # type-hint rendering
     'sphinx_rtd_theme'
 ]
+
+autosummary_generate = True        # generate stub pages automatically
 
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
@@ -31,7 +37,8 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = 'sphinx_rtd_theme'
+html_theme = 'furo'
+html_title = "hanaro&nbsp;<span style='font-size: small'>(하나로)</span><br><span style='font-size: x-small'>..a non-invasive `logging` configurator.</span>"
 #html_static_path = ['_static']
 html_theme_options = {
     'analytics_anonymize_ip': False,
