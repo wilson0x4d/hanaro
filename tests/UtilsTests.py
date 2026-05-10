@@ -48,7 +48,7 @@ def get_logger_has_correct_level(expected: str, level: str | int, reason: str) -
 @theory
 @inlinedata(__name__, None, f'because `name` was not provided, expected {__name__}')
 @inlinedata('test', 'test', 'because `name` was provided, expected "test"')
-def get_queued_logger_levelVerification(expected: str, name: str | None, reason: str) -> None:
+def get_queued_logger_level_verification(expected: str, name: str | None, reason: str) -> None:
     """Assert :function:``get_queued_logger`` returns a logger with correct *level* setting."""
     result = hanaro.get_queued_logger(name)
     assert expected == result.name, reason
@@ -57,13 +57,13 @@ def get_queued_logger_levelVerification(expected: str, name: str | None, reason:
 @fact
 def configure_logging_accepts_apppsettings2() -> None:
     """Assert :function:``configure_logging`` accepts an :class:``appsettings2.Configuration`` object."""
-    hanaro.configure_logging(appsettings2.getConfiguration())
+    hanaro.configure_logging(appsettings2.get_configuration())
 
 
 @fact
 def configure_lgging_accepts_dict() -> None:
     """Assert :function:``configure_logging`` accepts a dictionary."""
-    hanaro.configure_logging(appsettings2.getConfiguration().toDictionary())
+    hanaro.configure_logging(appsettings2.get_configuration().toDictionary())
 
 
 @fact

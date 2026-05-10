@@ -65,11 +65,11 @@ This code sample is a minimum-viable solution. The ``custom`` handler above is o
 
 .. code:: python
 
-    from appsettings2 import getConfiguration
+    from appsettings2 import get_configuration
     from hanaro import configure_logging
     import logging
 
-    configure_logging(getConfiguration())
+    configure_logging(get_configuration())
 
     logger = logging.getLogger(__name__)
 

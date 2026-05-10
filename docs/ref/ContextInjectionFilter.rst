@@ -47,7 +47,7 @@ Another overlooked issue is that some systems expect metadata to appear position
     class Foo:
         def __init__(self) -> None:
             self.__oid = uuid.uuid4().hex
-            self.__logger = logging.getLogger(__name__)
+            self.__logger = logging.get_logger(__name__)
             self.__context = ContextInjectionFilter(isMetadata = True)
             self.__logger.addFilter(self.__context)
             self.__context['foo_id'] = self.__oid

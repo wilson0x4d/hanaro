@@ -1,7 +1,7 @@
 Overview
 ========
 
-**hanaro** (하나로) is a non-invasive ``logging`` configurator for Python.
+**hanaro** (하나로) is a non-invasive ``logging`` configurator.
 
 .. toctree::
    :maxdepth: 3

@@ -1,4 +1,4 @@
-`hanaro` (하나로) is a non-invasive `logging` configurator for Python.
+`hanaro` (하나로) is a non-invasive `logging` configurator.
 
 This README is only a high-level introduction to **hanaro**. For more detailed documentation, please view the official docs at [https://hanaro.readthedocs.io](https://hanaro.readthedocs.io).
 
@@ -64,11 +64,11 @@ Let's try a "learn by example" approach. The following two snippets are the cont
 This code sample is a minimum-viable solution. The `custom` handler above is omitted, but for the sake of demonstration know that `class` is the fully-qualified type name of a `logging.Handler` subclass and **hanaro** will create an instance of that class and configure as it does all other handlers.
 
 ```python
-from appsettings2 import getConfiguration
+from appsettings2 import get_configuration
 from hanaro import configure_logging
 import logging
 
-configure_logging(getConfiguration())
+configure_logging(get_configuration())
 
 logger = logging.getLogger(__name__)
 

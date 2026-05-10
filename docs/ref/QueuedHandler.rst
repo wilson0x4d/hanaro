@@ -44,7 +44,7 @@ Consider this "naive" example:
 
     class MyApp:    
         def __init__(self) -> None:
-            self.__logger = logging.getLogger(__name__)
+            self.__logger = logging.get_logger(__name__)
             self.__workers = []
 
         def __createWorker(self) -> None:
