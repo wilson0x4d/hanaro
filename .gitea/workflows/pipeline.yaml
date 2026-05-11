@@ -6,11 +6,9 @@ on:
     branches:
       - master
     paths:
-      - 'hanaro/**'
-      - 'pyproject.toml'
-      - '!README.md'
-      - '!docs/**'
       - '.gitea/workflows/pipeline.yaml'
+      - 'src/**'
+      - 'pyproject.toml'
 jobs:
   package-and-deploy:
     name: "Package & Deploy"
