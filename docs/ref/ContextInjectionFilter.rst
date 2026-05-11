@@ -5,17 +5,17 @@ Facilitates injecting attributes into logging Records.
 
 .. py:currentmodule:: hanaro
 
-.. py:class:: ContextInjectionFilter(context, isMetadata, metadataName)
+.. py:class:: ContextInjectionFilter(context, is_metadata, metadataName)
     :canonical: hanaro.ContextInjectionFilter
 
     :param dict[str,str] context: The context to be injected. Each key of the dictionary representing one attribute to be injected into logging Records.
-    :param bool isMetadata: (OPTIONAL) Indicates that the context should be aggregated into a single ``metadata`` attribute. Default is ``False``.
+    :param bool is_metadata: (OPTIONAL) Indicates that the context should be aggregated into a single ``metadata`` attribute. Default is ``False``.
     :param str metadataName: (OPTIONAL) The name of the "metadata" attribute. Default is ``metadata``.
 
 What is the ``metadata`` attribute?
 -----------------------------------
 
-When configured, ``ContextInjectionFilter`` aggregates the ``context`` data into a single attribute named ``metadata``. This allows logging frameworks to control the position of metadata.
+When ``is_metadata==True``, ``ContextInjectionFilter`` aggregates the ``context`` data into a single attribute named ``metadata``. This allows logging frameworks to control the position of metadata.
 
 Why?
 ----
@@ -48,13 +48,13 @@ Another overlooked issue is that some systems expect metadata to appear position
         def __init__(self) -> None:
             self.__oid = uuid.uuid4().hex
             self.__logger = logging.get_logger(__name__)
-            self.__context = ContextInjectionFilter(isMetadata = True)
+            self.__context = ContextInjectionFilter(is_metadata = True)
             self.__logger.addFilter(self.__context)
             self.__context['foo_id'] = self.__oid
-            self.__callCounter = 0
+            self.__call_counter = 0
         def doStuff(self) -> None:
-            self.__callCounter += 1
-            self.__context['call_id'] = str(self.__callCounter)
+            self.__call_counter += 1
+            self.__context['call_id'] = str(self.__call_counter)
             try:
                 self.__logger.info('Started processing..')
                 # do stuff                

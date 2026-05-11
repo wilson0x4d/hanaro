@@ -18,8 +18,8 @@ class ContextInjectionFilter(logging.Filter):
         :param metadata_name: For "metadata" contexts, sets the Log Record Attribute Name of the metadata, defaults to "metadata".
         """
         self.__context = context if context is not None else {}
-        self.__isMetadata = is_metadata
-        self.__metadataName = (
+        self.__is_metadata = is_metadata
+        self.__metadata_name = (
             metadata_name
             if metadata_name is not None and len(metadata_name) > 0
             else 'metadata'
@@ -63,15 +63,15 @@ class ContextInjectionFilter(logging.Filter):
         :param record: The Log Record to mutate.
         :return: ``True``
         """
-        if self.__isMetadata:
-            metadata = f' {getattr(record, self.__metadataName, "")}'
+        if self.__is_metadata:
+            metadata = f' {getattr(record, self.__metadata_name, "")}'
             for k, v in self.__context.items():
                 if not hasattr(record, k):
                     metadata = f'{metadata} {k}="{v}"'
                 else:
                     metadata = re.sub(f' {k}="[^"]*"', f' {k}="{v}"', metadata)
                 setattr(record, k, v)
-            setattr(record, self.__metadataName, metadata.lstrip())
+            setattr(record, self.__metadata_name, metadata.lstrip())
         else:
             for k, v in self.__context.items():
                 setattr(record, k, v)

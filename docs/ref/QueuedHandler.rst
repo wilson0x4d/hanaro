@@ -25,9 +25,9 @@ Consider this "naive" example:
             self.__logger.addFilter(harano.ContextInjectionFilter({ 'worker_id': uuid.uuid4().hex }))
 
         def __threadmain(self) -> None:
-            self.__asyncioEventLoop = asyncio.new_event_loop()
-            asyncio.set_event_loop(self.__asyncioEventLoop)
-            self.__asyncioEventLoop.run_until_complete(self.__dowork())
+            self.__asyncio_event_loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(self.__asyncio_event_loop)
+            self.__asyncio_event_loop.run_until_complete(self.__dowork())
             self.__logger.info(f'{self.__class__.__name__} stopped.')
 
         async def __dowork(self) -> None:
@@ -47,7 +47,7 @@ Consider this "naive" example:
             self.__logger = logging.get_logger(__name__)
             self.__workers = []
 
-        def __createWorker(self) -> None:
+        def __create_worker(self) -> None:
             worker = MyWorker()
             self.__workers.append(worker)
             worker.run()
@@ -57,7 +57,7 @@ Consider this "naive" example:
                 # do some stuff
                 await asyncio.sleep(0.1)
                 if len(self.__workers) < 10:
-                    self.__createWorker()                
+                    self.__create_worker()                
                 # write queued logs
                 while (logRecord := QueuedHandler.get_log_record()) is not None:
                     self.__logger.callHandlers(logRecord)

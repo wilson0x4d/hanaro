@@ -12,9 +12,27 @@ pip install hanaro
 
 ## Usage
 
-Let's try a "learn by example" approach. The following two snippets are the contents of a configuration file that contains a "logging" configuration section, and a Python code file that initializes Python's standard `logging` system using that configuration. This is by no means an exhaustive example, it only intends to touch on the major offerings of **hanaro**.
+Let's try a "learn by example" approach:
 
-> NOTE: Configuration handling is performed using `appsettings2` which supports json, toml, yaml, xml, command-line args, and environment variables to provide a unified configuration solution. This example, however, uses json because of json's wider familiarity. For the sake of demonstration assume this content is in a file named `appsettings.json`.
+```python
+import hanaro
+
+hanaro.configure_logging()
+logger = hanaro.get_logger()
+logger.info('Hello, World!')
+```
+
+In the above example **hanaro** is used to apply a basic logging configuration and then create a `Logger` instance that identifies the current module.  No explciit configuration is provided, so the default behavior is to allocate a `console` handler with a `logfmt` that allows logging back-ends (GTM, ELK, etc) to properly handle mult-line log entries (typically error logs containing stack traces.)
+
+When executed the program outputs the following:
+
+```plaintext
+[2025-12-31T12:34:56] Hello, World! level=INFO source=__main__ 
+```
+
+### Configuration
+
+Configuration handling is performed using [`appsettings2`](https://pypi.org/project/appsettings2/) which supports json, toml, yaml, environment variable, and command-line args to provide a unified configuration.  For demonstration, assume the following is the content of `appsettings.json`:
 
 ```json
 {
@@ -61,35 +79,32 @@ Let's try a "learn by example" approach. The following two snippets are the cont
 }
 ```
 
-This code sample is a minimum-viable solution. The `custom` handler above is omitted, but for the sake of demonstration know that `class` is the fully-qualified type name of a `logging.Handler` subclass and **hanaro** will create an instance of that class and configure as it does all other handlers.
+Modifying the prior example to use such a configuration is trivial:
 
 ```python
-from appsettings2 import get_configuration
-from hanaro import configure_logging
-import logging
+import appsettings2
+import hanaro
 
-configure_logging(get_configuration())
-
-logger = logging.getLogger(__name__)
-
+hanaro.configure_logging(
+    appsettings2.get_configuration()
+)
+logger = hanaro.get_logger()
 logger.info('Hello, World!')
 ```
 
-When executed the program outputs the following:
+QA and DevOps will find that [`appsettings2.get_configuration`](https://appsettings2.readthedocs.io/en/latest/ref/helpers/get_configuration.html) makes it very easy to override configuration with just the one line of code.
 
-```plaintext
-[2025-12-31T12:34:56] Hello, World! level=INFO source=__main__ 
-```
 
 ## Notables..
 
 Things not obvious given the example above:
 
-* All configuration options are optional, you can reduce the config to specifying only those things you wish to customize.
-* It is not necessary to load a configuration at all, a call to `configure_logging()` will still apply reasonable defaults such as adding a console handler, applying a line format, applying a default date format (ISO 8601), etc.
-* If no handlers are configured, a default handler for "console" is configured.
+* All configuration options are optional, you can reduce the config to specify only the features you wish to customize.
+* If no configuration (or a partial configuration) is provided, `configure_logging()` will apply defaults.
+* If no handlers are configured, a default handler for "console" logging is configured.
+* If no format is specified, a default that is friendly toward GTM/ELK/etc parsing is used.
+* **hanaro** only has a single direct dependency: [``appsettings2``](https://pypi.org/project/appsettings2/).
 
-**hanaro** only has a single direct dependency: [``appsettings2``](https://pypi.org/project/appsettings2/).
 
 ## Contact
 
