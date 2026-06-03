@@ -35,7 +35,7 @@ def configure_logging(
     else:
         configuration = appsettings2.Configuration()
     if force or not logging.getLogger().hasHandlers():
-        handlers = []
+        handlers = list[logging.Handler]()
         default_bidi_enabled = cast(bool, configuration.get('logging__bidi', True))
         default_level = cast(str, configuration.get('logging__level', 'DEBUG')).upper()
         default_format = configuration.get('logging__format', logging.BASIC_FORMAT)
@@ -56,7 +56,7 @@ def configure_logging(
                         args = handler_config.get('args')
                         handler = handler_class(**(args.toDictionary() if args is not None else {}))
                     case 'console':
-                        handler = logging.StreamHandler(sys.stdout)                    
+                        handler = logging.StreamHandler(sys.stdout)
                     case 'file':
                         log_path = handler_config.get('path')
                         if log_path is None:
@@ -70,7 +70,7 @@ def configure_logging(
                         max_size: str | int | None = handler_config.get('max_size')
                         max_size = max_size if max_size is not None else 4 * 1024 * 1024
                         if type(max_size) is str:
-                            size_unit = max_size[len(max_size)-3:].upper()
+                            size_unit = max_size[len(max_size) - 3:].upper()
                             match size_unit:
                                 case 'KIB':
                                     max_size = int(max_size[:-3]) * 1024
@@ -93,9 +93,11 @@ def configure_logging(
                 if handler is not None:
                     handler.setLevel(getattr(logging, handler_config.get('level', default_level).upper()))
                     if handler.formatter is None:
-                        if (default_bidi_enabled
+                        if (
+                            default_bidi_enabled
                             and type(handler) is logging.StreamHandler
-                            and handler.stream is sys.stdout):
+                            and handler.stream is sys.stdout
+                        ):
                             handler.formatter = BidiFormatter(handler_config.get('format', default_format), datefmt)
                         else:
                             handler.formatter = logging.Formatter(handler_config.get('format', default_format), datefmt)
@@ -122,7 +124,7 @@ def configure_logging(
         return handlers
     else:
         logger = logging.getLogger(__name__)
-        logger.warning(f'Handlers were already configured and `force != True`.')
+        logger.warning('Handlers were already configured and `force != True`.')
         return []
 
 
@@ -154,7 +156,7 @@ def get_logger(name: Optional[str] = None, level: int | str = logging.NOTSET, al
 
     :param str name: (OPTIONAL) The name for the logger instance. When not provided an attempt will be made to resolve the name of the calling module. Default is ``None``.
     :param int|str level: (OPTIONAL) The default logging Level for the Logger. Default is ```NOTSET```.
-    :returns: A ``logging.Logger`` instance that only has a :py:class:`~hanaro.QueuedHandler` configured.    
+    :returns: A ``logging.Logger`` instance that only has a :py:class:`~hanaro.QueuedHandler` configured.
     """
     return __get_logger(name, level, allow_queued_logger=allow_queued_logger)
 
@@ -178,11 +180,11 @@ def __get_queued_logger(name: Optional[str] = None, level: int | str = logging.N
 
 def get_queued_logger(name: Optional[str] = None, level: int | str = logging.NOTSET) -> logging.Logger:
     """
-    Similar to Python's own ``logging.getLogger(...)`` except this function provides a bare-bones Logger that is only configured to forward logging Records to a :py:class:`~hanaro.QueuedHandler` (intentionally bypassing the rest of the logging system.)
+    Similar to Python's own ``logging.getLogger(...)`` except this function provides a bare-bones Logger that is only configured to forward logging Records to a :py:class:`~hanaro.QueuedHandler` (intentionally bypassing the rest of the logging system).
 
     :param str name: (OPTIONAL) The name for the logger instance. When not provided an attempt will be made to resolve the name of the calling module. Default is ``None``.
     :param int|str level: (OPTIONAL) The default logging Level for the Logger. Default is ```NOTSET```.
-    :returns: A ``logging.Logger`` instance that only has a :py:class:`~hanaro.QueuedHandler` configured.    
+    :returns: A ``logging.Logger`` instance that only has a :py:class:`~hanaro.QueuedHandler` configured.
     """
     return __get_queued_logger(name, level)
 
@@ -211,19 +213,19 @@ def handle_queued_log_records() -> None:
 ############################
 
 
-configureLogging = configure_logging
+configureLogging = configure_logging  # noqa: N816
 """⚠️ DEPRECATED: use ``configure_logging(...)`` instead."""
 
 
-getLogger = get_logger
+getLogger = get_logger  # noqa: N816
 """⚠️ DEPRECATED: use ``get_logger(...)`` instead."""
 
 
-getQueuedLogger = get_queued_logger
+getQueuedLogger = get_queued_logger  # noqa: N816
 """⚠️ DEPRECATED: use ``get_queued_logger(...)`` instead."""
 
 
-handleQueuedLogRecords = handle_queued_log_records
+handleQueuedLogRecords = handle_queued_log_records  # noqa: N816
 """⚠️ DEPRECATED: use ``handle_queued_log_records(...)`` instead."""
 
 

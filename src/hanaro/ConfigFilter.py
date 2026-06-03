@@ -11,7 +11,7 @@ class _ConfigFilterSettings:
 
     __slots__ = ['level', 'pattern', 'regex', 'source']
     level: int
-    pattern: re.Pattern | None
+    pattern: re.Pattern[str] | None
     regex: bool
     source: str
 

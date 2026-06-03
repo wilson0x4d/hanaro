@@ -8,12 +8,12 @@ import queue
 class QueuedHandler(logging.Handler):
     """
     Facilitates moving log output between threaded/async contexts via a Log Queue.
-    
+
     An application that spawns background threads (such as asyncio event loops) eventually shows concurrency problems in logging output (partial stream writes, broken parsing in downstream systems, etc.)
 
     **QueuedHandler** solves concurrency problems by collecting Log Records to a thread-safe Log Queue, accessible from a single logging context (such as the main thread of an application) where it can be safely written in a way that preserves ordering and avoids multi-threaded clobbering of log output.
     """
-    
+
     __s_queue: queue.Queue[logging.LogRecord] = queue.Queue()
 
     def emit(self, record: logging.LogRecord) -> None:
@@ -37,5 +37,5 @@ class QueuedHandler(logging.Handler):
             pass  # NOP
         return None
 
-    getLogRecord = get_log_record
+    getLogRecord = get_log_record  # noqa: N815
     """⚠️ DEPRECATED: Use ``get_log_rewcord(...)`` instead."""
