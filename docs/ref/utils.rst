@@ -101,3 +101,17 @@ The utils module is where helper functions are located, for example ``configure_
     
     # Outputs to console (depends on format spec):
     # [2025-12-31 12:59:59] level="INFO" source="ur.special" msg="Hello, World!"
+
+
+.. py:function:: patch_logging()
+    :canonical: hanaro.utils.patch_logging
+
+    Patch ``hanaro.get_logger`` into ``logging.getLogger``, so that code unaware of hanaro can indirectly use it without requiring a code change.
+
+.. rubric:: Example:
+
+.. code:: python
+
+    import hanaro
+
+    hanaro.patch_logging()

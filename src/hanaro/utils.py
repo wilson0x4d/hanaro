@@ -9,7 +9,7 @@ import logging.handlers
 import os
 import sys
 import threading
-from typing import Any, Optional, cast
+from typing import Any, Callable, Optional, cast
 import uuid
 
 from .formatters.BidiFormatter import BidiFormatter
@@ -206,6 +206,14 @@ def handle_queued_log_records() -> None:
     """
     while (log_record := QueuedHandler.get_log_record()) is not None:
         logging.root.callHandlers(log_record)
+
+
+def patch_logging() -> None:
+    """
+    Patch ``hanaro.get_logger`` into ``logging.getLogger``, so that code unaware of hanaro can indirectly use it without requiring a code change.
+    """
+    if logging.getLogger is not get_logger:
+        logging.getLogger = get_logger
 
 
 ############################
