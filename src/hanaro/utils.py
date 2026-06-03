@@ -8,6 +8,7 @@ import logging
 import logging.handlers
 import os
 import sys
+import threading
 from typing import Any, Optional, cast
 import uuid
 
@@ -125,7 +126,7 @@ def configure_logging(
         return []
 
 
-def __get_logger(name: Optional[str] = None, level: int | str = logging.NOTSET) -> logging.Logger:
+def __get_logger(name: Optional[str] = None, level: int | str = logging.NOTSET, allow_queued_logger: bool = True) -> logging.Logger:
     if name is None:
         try:
             import inspect
@@ -137,13 +138,17 @@ def __get_logger(name: Optional[str] = None, level: int | str = logging.NOTSET) 
             )
         except Exception:
             pass  # NOP
-    logger = logging.getLogger(name)
+    logger: logging.Logger
+    if allow_queued_logger and threading.current_thread() is not threading.main_thread():
+        logger = get_queued_logger(name)
+    else:
+        logger = logging.getLogger(name)
     if level != logging.NOTSET:
         logger.setLevel(level)
     return logger
 
 
-def get_logger(name: Optional[str] = None, level: int | str = logging.NOTSET) -> logging.Logger:
+def get_logger(name: Optional[str] = None, level: int | str = logging.NOTSET, allow_queued_logger: bool = True) -> logging.Logger:
     """
     Similar to Python's own ``logging.getLogger(...)`` except this function attempts to resolve the name of the calling module when no name has been provided.
 
@@ -151,7 +156,7 @@ def get_logger(name: Optional[str] = None, level: int | str = logging.NOTSET) ->
     :param int|str level: (OPTIONAL) The default logging Level for the Logger. Default is ```NOTSET```.
     :returns: A ``logging.Logger`` instance that only has a :py:class:`~hanaro.QueuedHandler` configured.    
     """
-    return __get_logger(name, level)
+    return __get_logger(name, level, allow_queued_logger=allow_queued_logger)
 
 
 def __get_queued_logger(name: Optional[str] = None, level: int | str = logging.NOTSET) -> logging.Logger:
