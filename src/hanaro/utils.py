@@ -96,7 +96,7 @@ def configure_logging(
                     if handler.formatter is None:
                         if (
                             default_bidi_enabled
-                            and type(handler) is logging.StreamHandler
+                            and isinstance(handler, logging.StreamHandler)
                             and handler.stream is sys.stdout
                         ):
                             handler.formatter = BidiFormatter(handler_config.get('format', default_format), datefmt)
