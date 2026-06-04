@@ -19,6 +19,9 @@ from .ContextInjectionFilter import ContextInjectionFilter
 from .QueuedHandler import QueuedHandler
 
 
+__original_get_logger: Optional[Callable[[Optional[str]], logging.Logger]] = None
+
+
 def configure_logging(
     configuration: Optional[dict[str, Any] | appsettings2.Configuration] = None,
     force: bool = False
@@ -129,37 +132,39 @@ def configure_logging(
         return []
 
 
-def __get_logger(name: Optional[str] = None, level: int | str = logging.NOTSET, allow_queued_logger: bool = True) -> logging.Logger:
-    if name is None:
-        try:
-            import inspect
-            f = inspect.currentframe()
-            name = (
-                None if f is None or f.f_back is None else
-                f.f_back.f_globals.get('__name__', None) if f.f_back.f_back is None else
-                f.f_back.f_back.f_globals.get('__name__', None)
-            )
-        except Exception:
-            pass  # NOP
-    logger: logging.Logger
-    if allow_queued_logger and threading.current_thread() is not threading.main_thread():
-        logger = get_queued_logger(name)
-    else:
-        logger = logging.getLogger(name)
-    if level != logging.NOTSET:
-        logger.setLevel(level)
-    return logger
-
-
 def get_logger(name: Optional[str] = None, level: int | str = logging.NOTSET, allow_queued_logger: bool = True) -> logging.Logger:
     """
     Similar to Python's own ``logging.getLogger(...)`` except this function attempts to resolve the name of the calling module when no name has been provided.
 
     :param str name: (OPTIONAL) The name for the logger instance. When not provided an attempt will be made to resolve the name of the calling module. Default is ``None``.
     :param int|str level: (OPTIONAL) The default logging Level for the Logger. Default is ```NOTSET```.
-    :returns: A ``logging.Logger`` instance that only has a :py:class:`~hanaro.QueuedHandler` configured.
+    :returns: A ``logging.Logger`` instance.
     """
-    return __get_logger(name, level, allow_queued_logger=allow_queued_logger)
+    if name is None:
+        try:
+            import inspect
+            f = inspect.currentframe()
+            name = (
+                None
+                if f is None or f.f_back is None
+                else (
+                    f.f_globals.get('__name__', None)
+                    if f.f_back is None
+                    else f.f_back.f_globals.get('__name__', None)
+                )
+            )
+        except Exception:
+            pass  # NOP
+    logger: logging.Logger
+    if allow_queued_logger and threading.current_thread() is not threading.main_thread():
+        logger = get_queued_logger(name)
+    elif __original_get_logger is not None:
+        logger = __original_get_logger(name)
+    else:
+        logger = logging.getLogger(name)
+    if level != logging.NOTSET:
+        logger.setLevel(level)
+    return logger
 
 
 def __get_queued_logger(name: Optional[str] = None, level: int | str = logging.NOTSET) -> logging.Logger:
@@ -213,7 +218,9 @@ def patch_logging() -> None:
     """
     Patch ``hanaro.get_logger`` into ``logging.getLogger``, so that code unaware of hanaro can indirectly use it without requiring a code change.
     """
-    if logging.getLogger is not get_logger:
+    global __original_get_logger
+    if __original_get_logger is None:
+        __original_get_logger = logging.getLogger
         logging.getLogger = get_logger
 
 
@@ -243,6 +250,7 @@ __all__ = [
     'get_logger',
     'get_queued_logger',
     'handle_queued_log_records',
+    'patch_logging',
     # deprecated exports (since 1.0.0)
     'configureLogging',
     'getLogger',
