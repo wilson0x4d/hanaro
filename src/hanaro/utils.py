@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 import appsettings2
+from datetime import datetime, timezone
 import importlib
 import logging
 import logging.handlers
@@ -65,7 +66,7 @@ def configure_logging(
                         os.makedirs(log_path, exist_ok=True)
                         log_name = handler_config.get('name')
                         if log_name is None:
-                            log_name = cast(str, handler_config.get('level', f'log-{uuid.uuid4().hex}')).lower()
+                            log_name = f"{cast(str, handler_config.get('level', 'log'))}_{datetime.now(timezone.utc).strftime('%Y%m%d')}.log".lower()
                         log_name = os.path.join(log_path, log_name)
                         max_size: str | int | None = handler_config.get('max_size')
                         max_size = max_size if max_size is not None else 4 * 1024 * 1024
