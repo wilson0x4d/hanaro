@@ -11,6 +11,7 @@ from .utils import (
     get_logger,
     get_queued_logger,
     handle_queued_log_records,
+    patch_logging,
     # deprecated exports (since 1.0.0)
     configureLogging,
     getLogger,
@@ -32,6 +33,7 @@ __all__ = [
     'get_logger',
     'get_queued_logger',
     'handle_queued_log_records',
+    'patch_logging',
     # deprecated exports (since 1.0.0)
     'configureLogging',
     'getLogger',
