@@ -1,6 +1,8 @@
 # SPDX-FileCopyrightText: © 2025 Shaun Wilson
 # SPDX-License-Identifier: MIT
+from __future__ import annotations
 
+import contextvars
 import logging
 import re
 from typing import Optional
@@ -25,6 +27,7 @@ class ContextInjectionFilter(logging.Filter):
             else 'metadata'
         )
         super().__init__()
+        self.__token: contextvars.Token[Optional[ContextInjectionFilter]] | None = None
 
     def __getitem__(self, key: str) -> str | None:
         """
@@ -55,6 +58,32 @@ class ContextInjectionFilter(logging.Filter):
         :param key: The key to delete the value of.
         """
         self.__context.pop(key, None)
+
+    def __enter__(self) -> ContextInjectionFilter:
+        """
+        Establish this filter as the active context.
+
+        Any :func:``get_logger()`` call within this context will
+        automatically attach this filter to the returned logger.
+
+        Returns
+        -------
+        :class:``ContextInjectionFilter``
+            Returns ``self`` so it can be assigned in a ``with`` statement.
+        """
+        from .utils import _CIF_contextvar
+        self.__token = _CIF_contextvar.set(self)
+        return self
+
+    def __exit__(self, *args: object) -> None:
+        """
+        Restore the previous :class:``ContextInjectionFilter`` from
+        the enclosing scope.
+        """
+        from .utils import _CIF_contextvar
+        if self.__token is not None:
+            _CIF_contextvar.reset(self.__token)
+            self.__token = None
 
     def filter(self, record: logging.LogRecord) -> bool:
         """

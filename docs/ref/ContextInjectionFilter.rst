@@ -40,7 +40,7 @@ Another overlooked issue is that some systems expect metadata to appear position
 
 .. code:: python
 
-    from harano import ContextInjectionFilter
+    from hanaro import ContextInjectionFilter
     import logging
     import uuid
 
@@ -77,3 +77,24 @@ Another overlooked issue is that some systems expect metadata to appear position
     # { foo_id="58722a4b3c8b448ba09cd07d061a1728" call_id="3" } Stopped processing..
     #
 
+
+Context Manager
+---------------
+
+``ContextInjectionFilter`` implements ``__enter__`` and ``__exit__``, allowing it to be used as a context manager. When entered, the filter becomes the active context. Any subsequent call to ``hanaro.get_logger()`` within that context will automatically attach the filter to the returned logger. Upon exiting the context, the filter is detached from new logger instances.
+
+Nesting is supported: each ``with`` block pushes its filter via ``contextvars`` and ``__exit__`` restores the previous state via the saved token.
+
+.. rubric:: Example:
+
+.. code:: python
+
+    import hanaro
+
+    hanaro.configure_logging()
+
+    with hanaro.ContextInjectionFilter({'foo': 'bar'}) as ctx:
+        logger = hanaro.get_logger()
+        logger.info('this receives "foo" metadata in the logs!')
+
+The impulse for this is to allow the creation of logging metadata before instantiating a downstream object (or function call) that creates a logger, then have the metadata injected automatically (since most likely the downstream code is not your own, otherwise you could have done this assignment directly.)

@@ -1,8 +1,10 @@
 """Provides helper methods such as ``configure_logging``, ``get_logger(...)``, etc."""
 # SPDX-FileCopyrightText: © 2025 Shaun Wilson
 # SPDX-License-Identifier: MIT
+from __future__ import annotations
 
 import appsettings2
+import contextvars
 from datetime import datetime, timezone
 import importlib
 import logging
@@ -19,6 +21,9 @@ from .ContextInjectionFilter import ContextInjectionFilter
 from .QueuedHandler import QueuedHandler
 
 
+_CIF_contextvar: contextvars.ContextVar[Optional[ContextInjectionFilter]] = (
+    contextvars.ContextVar('_CIF_contextvar', default=None)
+)
 __original_get_logger: Optional[Callable[[Optional[str]], logging.Logger]] = None
 
 
@@ -162,6 +167,9 @@ def get_logger(name: Optional[str] = None, level: int | str = logging.NOTSET, al
         logger = __original_get_logger(name)
     else:
         logger = logging.getLogger(name)
+    ctx = _CIF_contextvar.get()
+    if ctx is not None:
+        logger.addFilter(ctx)
     if level != logging.NOTSET:
         logger.setLevel(level)
     return logger
