@@ -1,7 +1,7 @@
 ---
 name: hanaro
 description: Non-invasive logging configurator — configure, filter, queue, and format logs via unified config. Use when working with hanaro, configure_logging, get_logger, ConfigFilter, ContextInjectionFilter, QueuedHandler, BidiFormatter, or patch_logging.
-user-invocable: false
+user-invocable: true
 disable-model-invocation: false
 ---
 
