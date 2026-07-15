@@ -50,7 +50,7 @@ exclude = [
 ]
 
 [tool.setuptools.package-data]
-"hanaro" = ["py.typed"]
+"hanaro" = ["py.typed", "SKILL.md"]
 
 [tool.flake8]
 max-line-length = 120
