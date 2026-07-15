@@ -9,5 +9,6 @@ Overview
    Overview <self>
    Quick Start <quickstart>
    Reference <ref/index>
+   SKILL.md <SKILL>
    MIT License <license>
    Contact <contact>
