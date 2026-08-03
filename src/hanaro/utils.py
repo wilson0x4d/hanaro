@@ -1,6 +1,8 @@
-"""Provides helper methods such as ``configure_logging``, ``get_logger(...)``, etc."""
 # SPDX-FileCopyrightText: © 2025 Shaun Wilson
 # SPDX-License-Identifier: MIT
+
+"""Provides helper methods such as ``configure_logging``, ``get_logger(...)``, etc."""
+
 from __future__ import annotations
 
 import appsettings2
@@ -13,7 +15,6 @@ import os
 import sys
 import threading
 from typing import Any, Callable, Optional, cast
-import uuid
 
 from .formatters.BidiFormatter import BidiFormatter
 from .ConfigFilter import ConfigFilter
@@ -25,6 +26,7 @@ _CIF_contextvar: contextvars.ContextVar[Optional[ContextInjectionFilter]] = (
     contextvars.ContextVar('_CIF_contextvar', default=None)
 )
 __original_get_logger: Optional[Callable[[Optional[str]], logging.Logger]] = None
+__allow_queued_logger: bool = True
 
 
 def configure_logging(
@@ -44,6 +46,8 @@ def configure_logging(
     else:
         configuration = appsettings2.Configuration()
     if force or not logging.getLogger().hasHandlers():
+        global __allow_queued_logger
+        __allow_queued_logger = configuration.get('logging__allow_queued_logger', True)
         handlers = list[logging.Handler]()
         default_bidi_enabled = cast(bool, configuration.get('logging__bidi', True))
         default_level = cast(str, configuration.get('logging__level', 'DEBUG')).upper()
@@ -137,7 +141,7 @@ def configure_logging(
         return []
 
 
-def get_logger(name: Optional[str] = None, level: int | str = logging.NOTSET, allow_queued_logger: bool = True) -> logging.Logger:
+def get_logger(name: Optional[str] = None, level: int | str = logging.NOTSET, allow_queued_logger: bool | None = None) -> logging.Logger:
     """
     Similar to Python's own ``logging.getLogger(...)`` except this function attempts to resolve the name of the calling module when no name has been provided.
 
@@ -145,6 +149,8 @@ def get_logger(name: Optional[str] = None, level: int | str = logging.NOTSET, al
     :param int|str level: (OPTIONAL) The default logging Level for the Logger. Default is ```NOTSET```.
     :returns: A ``logging.Logger`` instance.
     """
+    if allow_queued_logger is None:
+        allow_queued_logger = __allow_queued_logger
     if name is None:
         try:
             import inspect
@@ -161,7 +167,7 @@ def get_logger(name: Optional[str] = None, level: int | str = logging.NOTSET, al
         except Exception:
             pass  # NOP
     logger: logging.Logger
-    if allow_queued_logger and threading.current_thread() is not threading.main_thread():
+    if allow_queued_logger is not False and threading.current_thread() is not threading.main_thread():
         logger = get_queued_logger(name)
     elif __original_get_logger is not None:
         logger = __original_get_logger(name)
@@ -176,7 +182,12 @@ def get_logger(name: Optional[str] = None, level: int | str = logging.NOTSET, al
 
 
 def __get_queued_logger(name: Optional[str] = None, level: int | str = logging.NOTSET) -> logging.Logger:
-    if name is None:
+    if __allow_queued_logger is not True:
+        if __original_get_logger is not None:
+            logger = __original_get_logger(name)
+        else:
+            logger = logging.getLogger(name)
+    elif name is None:
         try:
             import inspect
             f = inspect.currentframe()
