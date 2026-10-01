@@ -28,6 +28,47 @@ _CIF_contextvar: contextvars.ContextVar[Optional[ContextInjectionFilter]] = (
 __original_get_logger: Optional[Callable[[Optional[str]], logging.Logger]] = None
 __allow_queued_logger: bool = True
 
+__default_format: str = logging.BASIC_FORMAT
+__datefmt: str = '%Y-%m-%dT%H:%M:%S'
+__bidi_enabled: bool = True
+__config_filter: Optional[ConfigFilter] = None
+__context_injection_filter: Optional[ContextInjectionFilter] = None
+
+
+def configure_handler(handler: logging.Handler) -> logging.Handler:
+    """
+    Apply hanaro's formatter and filters to a handler so it behaves consistently
+    with handlers created by :py:func:``configure_logging``.
+
+    Use this for handlers added after :py:func:``configure_logging`` has run,
+    or for handlers that won't go through the normal configuration path.
+
+    :param handler: The handler to configure.
+    :returns: The handler, for chaining.
+    :raises RuntimeError: If called before :py:func:``configure_logging``.
+    """
+    if __config_filter is None or __context_injection_filter is None:
+        raise RuntimeError(
+            "configure_handler() must be called after configure_logging(). "
+            "Either call configure_logging() first, or create your own "
+            "formatter/filters for the handler."
+        )
+
+    if handler.formatter is None:
+        if (
+            __bidi_enabled
+            and isinstance(handler, logging.StreamHandler)
+            and handler.stream is sys.stdout
+        ):
+            handler.formatter = BidiFormatter(__default_format, __datefmt)
+        else:
+            handler.formatter = logging.Formatter(__default_format, __datefmt)
+
+    handler.addFilter(__config_filter)
+    handler.addFilter(__context_injection_filter)
+
+    return handler
+
 
 def configure_logging(
     configuration: Optional[dict[str, Any] | appsettings2.Configuration] = None,
@@ -56,6 +97,12 @@ def configure_logging(
         config_filter = ConfigFilter("config_filter", filter_configs.toDictionary() if filter_configs is not None else {})
         context_injection_filter = ContextInjectionFilter({}, True)
         datefmt = configuration.get('logging__datefmt', '%Y-%m-%dT%H:%M:%S')
+        global __default_format, __datefmt, __bidi_enabled, __config_filter, __context_injection_filter
+        __default_format = default_format
+        __datefmt = datefmt
+        __bidi_enabled = default_bidi_enabled
+        __config_filter = config_filter
+        __context_injection_filter = context_injection_filter
         # create configured handlers
         handler_configs = configuration.get('logging__handlers')
         if handler_configs is not None:
@@ -105,25 +152,12 @@ def configure_logging(
                             backupCount=max_count)
                 if handler is not None:
                     handler.setLevel(getattr(logging, handler_config.get('level', default_level).upper()))
-                    if handler.formatter is None:
-                        if (
-                            default_bidi_enabled
-                            and isinstance(handler, logging.StreamHandler)
-                            and handler.stream is sys.stdout
-                        ):
-                            handler.formatter = BidiFormatter(handler_config.get('format', default_format), datefmt)
-                        else:
-                            handler.formatter = logging.Formatter(handler_config.get('format', default_format), datefmt)
-                    handler.addFilter(config_filter)
-                    handler.addFilter(context_injection_filter)
+                    configure_handler(handler)
                     handlers.append(handler)
         # log to stdout if no handlers configured
         if len(handlers) == 0:
             handler = logging.StreamHandler(sys.stdout)
-            if default_bidi_enabled:
-                handler.formatter = BidiFormatter(default_format, datefmt)
-            else:
-                handler.formatter = logging.Formatter(default_format, datefmt)
+            configure_handler(handler)
             handlers.append(handler)
         # init
         logging.basicConfig(

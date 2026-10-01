@@ -27,6 +27,32 @@ The utils module is where helper functions are located, for example ``configure_
     # Outputs to console (depends on format spec):
     # [2025-12-31 12:59:59] level=INFO name=ur.special Hello, World!
 
+.. py:function:: configure_handler(handler)
+    :canonical: hanaro.utils.configure_handler
+
+    Applies hanaro's formatter and filters to a handler so it behaves consistently
+    with handlers created by :py:func:`configure_logging`.
+
+    Use this for handlers added after :py:func:`configure_logging` has run,
+    or for handlers that won't go through the normal configuration path.
+
+    :param logging.Handler handler: The handler to configure.
+    :returns: The handler, for chaining.
+    :raises RuntimeError: If called before :py:func:`configure_logging`.
+
+.. rubric:: Example:
+
+.. code:: python
+
+    import hanaro
+    import logging
+
+    hanaro.configure_logging()
+
+    my_handler = logging.StreamHandler()
+    hanaro.configure_handler(my_handler)
+    logging.root.addHandler(my_handler)
+
 .. py:function:: get_logger(name,level)
     :canonical: hanaro.utils.get_logger
 

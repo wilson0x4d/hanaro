@@ -7,6 +7,7 @@ from .ContextInjectionFilter import ContextInjectionFilter
 from .QueuedHandler import QueuedHandler
 from . import utils, formatters
 from .utils import (
+    configure_handler,
     configure_logging,
     get_logger,
     get_queued_logger,
@@ -29,6 +30,7 @@ __all__ = [
     'formatters',
     'QueuedHandler',
     'utils',
+    'configure_handler',
     'configure_logging',
     'get_logger',
     'get_queued_logger',
