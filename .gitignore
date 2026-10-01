@@ -16,3 +16,5 @@ logs/
 .coverage
 htmlcov/
 .ignore
+uv.lock
+.python-version

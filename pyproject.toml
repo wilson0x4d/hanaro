@@ -1,3 +1,7 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "hanaro"
 version = "0.0.0"
@@ -15,31 +19,29 @@ classifiers = [
 ]
 requires-python = ">=3.11"
 dependencies = [
-    "appsettings2 (>=2.0.1)"
+    "appsettings2 (>=2.1.1)"
 ]
 
 [project.optional-dependencies]
+bidi = [
+    "python-bidi"
+]
+
+[dependency-groups]
 dev = [
     "coverage",
     "flake8",
     "flake8-pyproject",
     "mypy",
     "pep8-naming",
-    "punit (>=1.4.0)",
+    "punit (>=1.14.1)",
     "twine"
-]
-bidi = [
-    "python-bidi"
 ]
 
 [project.urls]
 Documentation = "https://hanaro.readthedocs.io/"
 Homepage = "https://github.com/wilson0x4d/hanaro"
 Repository = "https://github.com/wilson0x4d/hanaro.git"
-
-[build-system]
-requires = ["setuptools", "twine"]
-build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
 where = ["src"]
@@ -52,6 +54,5 @@ exclude = [
 [tool.setuptools.package-data]
 "hanaro" = ["py.typed", "SKILL.md"]
 
-[tool.flake8]
-max-line-length = 120
-ignore = ["D100","E501"]
+[tool.uv]
+package = true
