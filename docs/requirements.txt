@@ -1,4 +1,10 @@
+# rtd-specific
 sphinx
+sphinx_design
 sphinx-autodoc-typehints
-sphinx_rtd_theme
 furo
+pygments
+accessible-pygments
+
+# from pyproject.toml
+appsettings2
