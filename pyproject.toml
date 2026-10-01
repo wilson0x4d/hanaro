@@ -29,6 +29,7 @@ bidi = [
 
 [dependency-groups]
 dev = [
+    "build",
     "coverage",
     "flake8",
     "flake8-pyproject",
