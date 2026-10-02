@@ -138,6 +138,8 @@ def configure_logging(
                         log_path = handler_config.get('path')
                         if log_path is None:
                             log_path = 'logs'
+                        log_path = os.path.expanduser(log_path)
+                        log_path = os.path.expandvars(log_path)
                         log_path = os.path.abspath(log_path)
                         os.makedirs(log_path, exist_ok=True)
                         log_name = handler_config.get('name')

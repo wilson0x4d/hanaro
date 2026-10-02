@@ -5,6 +5,8 @@ import appsettings2
 import hanaro
 from hanaro import ConfigFilter, ContextInjectionFilter, QueuedHandler
 import logging
+import logging.handlers
+from typing import cast
 from punit import fact, theory, inlinedata
 
 
@@ -178,3 +180,97 @@ def configure_handler_does_not_accept_custom_format() -> None:
     handler = logging.StreamHandler()
     hanaro.configure_handler(handler)
     assert handler.formatter is not None
+
+
+@fact
+def file_handler_expands_tilde_in_path() -> None:
+    """
+    Assert :py:func:``configure_logging`` expands `~` in the file handler path.
+    """
+    import os
+    import tempfile
+    import shutil
+    home_backup = os.environ.get('HOME')
+    temp_home = tempfile.mkdtemp()
+    try:
+        os.environ['HOME'] = temp_home
+        config = {
+            'logging': {
+                'handlers': [{'type': 'file', 'path': '~/hanaro_test', 'name': 'tilde.log'}]
+            }
+        }
+        handlers = hanaro.configure_logging(config, force=True)
+        assert len(handlers) == 1
+        file_handler = handlers[0]
+        assert isinstance(file_handler, logging.handlers.RotatingFileHandler), 'expected RotatingFileHandler'
+        expected_path = os.path.join(temp_home, 'hanaro_test', 'tilde.log')
+        assert file_handler.baseFilename == expected_path
+    finally:
+        if home_backup:
+            os.environ['HOME'] = home_backup
+        elif 'HOME' in os.environ:
+            del os.environ['HOME']
+        shutil.rmtree(temp_home, ignore_errors=True)
+
+
+@fact
+def file_handler_expands_env_vars_in_path() -> None:
+    """
+    Assert :py:func:``configure_logging`` expands `$HOME` environment variables in file handler path.
+    """
+    import os
+    import tempfile
+    import shutil
+    original_home = os.environ.get('HOME')
+    temp_home = tempfile.mkdtemp()
+    try:
+        os.environ['HANARO_TEST_DIR'] = temp_home
+        config = {
+            'logging': {
+                'handlers': [{'type': 'file', 'path': '$HANARO_TEST_DIR/hanaro_test', 'name': 'envvar.log'}]
+            }
+        }
+        handlers = hanaro.configure_logging(config, force=True)
+        assert len(handlers) == 1
+        file_handler = handlers[0]
+        expected_path = os.path.join(temp_home, 'hanaro_test', 'envvar.log')
+        assert cast(logging.handlers.RotatingFileHandler, file_handler).baseFilename == expected_path
+    finally:
+        if original_home:
+            os.environ['HOME'] = original_home
+        if 'HANARO_TEST_DIR' in os.environ:
+            del os.environ['HANARO_TEST_DIR']
+        shutil.rmtree(temp_home, ignore_errors=True)
+
+
+@fact
+def file_handler_expands_user_and_env_vars_combined() -> None:
+    """
+    Assert :py:func:``configure_logging`` expands both `~` and env vars in file handler path.
+    """
+    import os
+    import tempfile
+    import shutil
+    home_backup = os.environ.get('HOME')
+    temp_home = tempfile.mkdtemp()
+    try:
+        os.environ['HOME'] = temp_home
+        os.environ['HANARO_SUBDIR'] = 'logs'
+        config = {
+            'logging': {
+                'handlers': [{'type': 'file', 'path': '~/hanaro_test/$HANARO_SUBDIR', 'name': 'combined.log'}]
+            }
+        }
+        handlers = hanaro.configure_logging(config, force=True)
+        assert len(handlers) == 1
+        file_handler = handlers[0]
+        expected_path = os.path.join(temp_home, 'hanaro_test', 'logs', 'combined.log')
+        assert cast(logging.handlers.RotatingFileHandler, file_handler).baseFilename == expected_path
+    finally:
+        if home_backup:
+            os.environ['HOME'] = home_backup
+        elif 'HOME' in os.environ:
+            del os.environ['HOME']
+        if 'HANARO_SUBDIR' in os.environ:
+            del os.environ['HANARO_SUBDIR']
+        shutil.rmtree(temp_home, ignore_errors=True)
