@@ -34,7 +34,7 @@ entries (typically error logs containing stack traces).
 
 When executed the program outputs the following:
 
-.. code-block:: plaintext
+.. code-block:: text
 
     [2025-12-31T12:34:56] Hello, World! level=INFO source=__main__
 

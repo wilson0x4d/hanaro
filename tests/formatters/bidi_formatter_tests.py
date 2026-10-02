@@ -1,11 +1,12 @@
 # SPDX-FileCopyrightText: © 2026 Shaun Wilson
 # SPDX-License-Identifier: MIT
 
-from punit import strings
-from hanaro.formatters import BidiFormatter
 import logging
-from punit import fact
 from typing import Any, Callable, Optional
+
+from punit import fact, strings
+
+from hanaro.formatters.bidi_formatter import BidiFormatter
 
 bidi_fn: Optional[Callable[..., Any]] = None
 
@@ -17,7 +18,9 @@ except Exception:  # pragma: no cover
 
 @fact
 def basic_verification_test() -> None:
-    """Perform basic verification of :class:``BidiFormatter``."""
+    """
+    Perform basic verification of :py:class:``BidiFormatter``.
+    """
     fmt = '%(message)s'
     bidi_formatter = BidiFormatter(fmt)
     original = 'test יהוה test'

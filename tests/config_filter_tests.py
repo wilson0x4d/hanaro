@@ -3,7 +3,7 @@
 
 import logging
 from punit import theory, inlinedata
-from hanaro import ConfigFilter
+from hanaro.config_filter import ConfigFilter
 
 
 @theory
@@ -12,10 +12,12 @@ from hanaro import ConfigFilter
 @inlinedata(False, 'test123', 'INFO', 'test123', logging.DEBUG, 'level below config (filtered)')
 @inlinedata(True, 'test123', 'INFO', 'test123', logging.WARNING, 'level above config (not filtered)')
 def matches_source_and_level(should_match: bool, source: str, level: str, name: str, levelno: int, reason: str) -> None:
-    """Assert :class:``ConfigFilter`` will match *source* and *level* configuration settings."""
+    """
+    Assert :py:class:``ConfigFilter`` will match *source* and *level* configuration settings.
+    """
     record = logging.LogRecord(name, levelno, 'pathname', 5, 'msg', None, None, None, None)
     filter = ConfigFilter(
-        "config_filter",
+        'config_filter',
         {
             source: {
                 'level': level
@@ -35,10 +37,12 @@ def matches_source_and_level(should_match: bool, source: str, level: str, name: 
 @inlinedata(True, '.*name', 'test.namespace', 'matches cannot partially right-align')
 @inlinedata(False, '.*name.*', 'test.namespace', 'matches can explicitly substring')
 def regex_matching(should_match: bool, source: str, name: str, reason: str) -> None:
-    """Assert :class:``ConfigFilter`` will match *source* having a regex patterns."""
+    """
+    Assert :py:class:``ConfigFilter`` will match *source* having a regex patterns.
+    """
     record = logging.LogRecord(name, logging.DEBUG, 'pathname', 5, 'msg', None, None, None, None)
     filter = ConfigFilter(
-        "config_filter",
+        'config_filter',
         {
             source: {
                 'level': 'INFO',
@@ -54,10 +58,12 @@ def regex_matching(should_match: bool, source: str, name: str, reason: str) -> N
 @inlinedata(False, 'test', 'test', 'exact match')
 @inlinedata(True, 'test.*', 'test.namespace', 'regex match should fail')
 def non_regex_matching(should_match: bool, source: str, name: str, reason: str) -> None:
-    """Assert :class:``ConfigFilter`` will match *source* NOT having a regex patterns."""
+    """
+    Assert :py:class:``ConfigFilter`` will match *source* NOT having a regex patterns.
+    """
     record = logging.LogRecord(name, logging.DEBUG, 'pathname', 5, 'msg', None, None, None, None)
     filter = ConfigFilter(
-        "config_filter",
+        'config_filter',
         {
             source: {
                 'level': 'INFO',
@@ -77,10 +83,12 @@ def non_regex_matching(should_match: bool, source: str, name: str, reason: str) 
 @inlinedata(True, logging.FATAL)
 @inlinedata(True, logging.CRITICAL)
 def level_matching(should_match: bool, level: int) -> None:
-    """Assert :class:``ConfigFilter`` will match *level* setting."""
+    """
+    Assert :py:class:``ConfigFilter`` will match *level* setting.
+    """
     record = logging.LogRecord('test', level, 'pathname', 5, 'msg', None, None, None, None)
     filter = ConfigFilter(
-        "config_filter",
+        'config_filter',
         {
             'test': {
                 'level': 'WARNING'

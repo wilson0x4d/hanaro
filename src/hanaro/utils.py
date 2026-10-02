@@ -16,10 +16,10 @@ import sys
 import threading
 from typing import Any, Callable, Optional, cast
 
-from .formatters.BidiFormatter import BidiFormatter
-from .ConfigFilter import ConfigFilter
-from .ContextInjectionFilter import ContextInjectionFilter
-from .QueuedHandler import QueuedHandler
+from .formatters.bidi_formatter import BidiFormatter
+from .config_filter import ConfigFilter
+from .context_injection_filter import ContextInjectionFilter
+from .queued_handler import QueuedHandler
 
 
 _CIF_contextvar: contextvars.ContextVar[Optional[ContextInjectionFilter]] = (
@@ -46,6 +46,15 @@ def configure_handler(handler: logging.Handler) -> logging.Handler:
     :param handler: The handler to configure.
     :returns: The handler, for chaining.
     :raises RuntimeError: If called before :py:func:``configure_logging``.
+
+    Usage
+    -----
+
+    .. code-block:: python
+
+        handler = logging.StreamHandler()
+        hanaro.configure_handler(handler)
+
     """
     if __config_filter is None or __context_injection_filter is None:
         raise RuntimeError(
@@ -79,7 +88,15 @@ def configure_logging(
 
     :param configuration: The configuration object to pull logging settings from. Omit to apply defaults.
     :param force: Should configuration be applied (forced) even if handlers have already been configured?
-    :return: A list of handlers which are configured.
+    :returns: A list of handlers which are configured.
+
+    Usage
+    -----
+
+    .. code-block:: python
+
+        hanaro.configure_logging()
+        hanaro.configure_logging({'logging': {'handlers': [{'type': 'console'}]}})
     """
     if configuration is not None:
         if isinstance(configuration, dict):
@@ -94,7 +111,7 @@ def configure_logging(
         default_level = cast(str, configuration.get('logging__level', 'DEBUG')).upper()
         default_format = configuration.get('logging__format', logging.BASIC_FORMAT)
         filter_configs = configuration.get('logging__filters', None)
-        config_filter = ConfigFilter("config_filter", filter_configs.toDictionary() if filter_configs is not None else {})
+        config_filter = ConfigFilter('config_filter', filter_configs.toDictionary() if filter_configs is not None else {})
         context_injection_filter = ContextInjectionFilter({}, True)
         datefmt = configuration.get('logging__datefmt', '%Y-%m-%dT%H:%M:%S')
         global __default_format, __datefmt, __bidi_enabled, __config_filter, __context_injection_filter
@@ -179,9 +196,17 @@ def get_logger(name: Optional[str] = None, level: int | str = logging.NOTSET, al
     """
     Similar to Python's own ``logging.getLogger(...)`` except this function attempts to resolve the name of the calling module when no name has been provided.
 
-    :param str name: (OPTIONAL) The name for the logger instance. When not provided an attempt will be made to resolve the name of the calling module. Default is ``None``.
-    :param int|str level: (OPTIONAL) The default logging Level for the Logger. Default is ```NOTSET```.
+    :param name: The name for the logger instance. When not provided an attempt will be made to resolve the name of the calling module.
+    :param level: The default logging Level for the Logger.
     :returns: A ``logging.Logger`` instance.
+
+    Usage
+    -----
+
+    .. code-block:: python
+
+        logger = hanaro.get_logger()
+        logger = hanaro.get_logger('my_module', logging.DEBUG)
     """
     if allow_queued_logger is None:
         allow_queued_logger = __allow_queued_logger
@@ -241,9 +266,17 @@ def get_queued_logger(name: Optional[str] = None, level: int | str = logging.NOT
     """
     Similar to Python's own ``logging.getLogger(...)`` except this function provides a bare-bones Logger that is only configured to forward logging Records to a :py:class:`~hanaro.QueuedHandler` (intentionally bypassing the rest of the logging system).
 
-    :param str name: (OPTIONAL) The name for the logger instance. When not provided an attempt will be made to resolve the name of the calling module. Default is ``None``.
-    :param int|str level: (OPTIONAL) The default logging Level for the Logger. Default is ```NOTSET```.
+    :param name: The name for the logger instance. When not provided an attempt will be made to resolve the name of the calling module.
+    :param level: The default logging Level for the Logger.
     :returns: A ``logging.Logger`` instance that only has a :py:class:`~hanaro.QueuedHandler` configured.
+
+    Usage
+    -----
+
+    .. code-block:: python
+
+        logger = hanaro.get_queued_logger()
+        logger = hanaro.get_queued_logger('async_worker', logging.DEBUG)
     """
     return __get_queued_logger(name, level)
 
@@ -252,16 +285,19 @@ def handle_queued_log_records() -> None:
     """
     Output all queued log records using the root logger.
 
-    This is a QOL function for devs using `get_queued_logger`.
+    This is a QOL function for devs using :py:func:``get_queued_logger``.
 
-    ```python
-    while not exitProgram:
-        doProgramLogic()
-        hanaro.handle_queued_log_records()
-        # (consider signal or sleep to play nice with CPU)
-    ```
+    This function can be called on any thread, but it is designed to be called from a single thread, ideally the main thread.
 
-    This function must be called on the main thread. Calling from any other thread will have undefined behavior and is not supported.
+    Usage
+    -----
+
+    .. code-block:: python
+
+        while not exitProgram:
+            doProgramLogic()
+            hanaro.handle_queued_log_records()
+            # (consider signal or sleep to play nice with CPU)
     """
     while (log_record := QueuedHandler.get_log_record()) is not None:
         logging.root.callHandlers(log_record)
@@ -270,6 +306,16 @@ def handle_queued_log_records() -> None:
 def patch_logging() -> None:
     """
     Patch ``hanaro.get_logger`` into ``logging.getLogger``, so that code unaware of hanaro can indirectly use it without requiring a code change.
+
+    Usage
+    -----
+
+    .. code-block:: python
+
+        hanaro.configure_logging()
+        hanaro.patch_logging()
+        import logging
+        logging.getLogger('my_module')  # uses hanaro.get_logger
     """
     global __original_get_logger
     if __original_get_logger is None:
@@ -277,36 +323,10 @@ def patch_logging() -> None:
         logging.getLogger = get_logger
 
 
-############################
-#       deprecations       #
-############################
-
-
-configureLogging = configure_logging  # noqa: N816
-"""⚠️ DEPRECATED: use ``configure_logging(...)`` instead."""
-
-
-getLogger = get_logger  # noqa: N816
-"""⚠️ DEPRECATED: use ``get_logger(...)`` instead."""
-
-
-getQueuedLogger = get_queued_logger  # noqa: N816
-"""⚠️ DEPRECATED: use ``get_queued_logger(...)`` instead."""
-
-
-handleQueuedLogRecords = handle_queued_log_records  # noqa: N816
-"""⚠️ DEPRECATED: use ``handle_queued_log_records(...)`` instead."""
-
-
 __all__ = [
     'configure_logging',
     'get_logger',
     'get_queued_logger',
     'handle_queued_log_records',
-    'patch_logging',
-    # deprecated exports (since 1.0.0)
-    'configureLogging',
-    'getLogger',
-    'getQueuedLogger',
-    'handleQueuedLogRecords',
+    'patch_logging'
 ]

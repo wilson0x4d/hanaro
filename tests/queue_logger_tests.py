@@ -1,13 +1,17 @@
 # SPDX-FileCopyrightText: © 2026 Shaun Wilson
 # SPDX-License-Identifier: MIT
 
-from hanaro import QueuedHandler, get_queued_logger
+from hanaro import get_queued_logger
+from hanaro.queued_handler import QueuedHandler
 from hanaro.utils import handle_queued_log_records
 from punit import fact
 
 
 @fact
 async def queuedLogger_bvt() -> None:
+    """
+    Assert :py:func:``get_queued_logger`` correctly queues log records.
+    """
     expected_count = 10
     logger = get_queued_logger()
     async def emitter() -> None:
@@ -20,7 +24,7 @@ async def queuedLogger_bvt() -> None:
     while (log_record := QueuedHandler.get_log_record()) is not None:
         if 'queued emission' in log_record.getMessage():
             actual_count += 1
-    assert actual_count == expected_count, f'expected{expected_count}, actual:{actual_count}'
+    assert actual_count == expected_count, f'expected:{expected_count}, actual:{actual_count}'
     # NOTE: these two lines only exist for code coverage, the above validated functionality.
     logger.debug('coverage')
     handle_queued_log_records()

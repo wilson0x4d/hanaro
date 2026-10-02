@@ -2,7 +2,7 @@
 # SPDX-FileCopyrightText: © 2026 Shaun Wilson
 # SPDX-License-Identifier: MIT
 
-from .BidiFormatter import BidiFormatter
+from .bidi_formatter import BidiFormatter
 
 __all__ = [
     'BidiFormatter'

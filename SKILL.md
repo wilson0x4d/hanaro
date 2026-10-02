@@ -243,27 +243,27 @@ hanaro
 
 ---
 
-## Deprecation Notes
+## Removal Notes
 
-| Old (deprecated since 1.0.0) | New                |
-|------------------------------|--------------------|
-| `configureLogging`           | `configure_logging`|
-| `getLogger`                  | `get_logger`       |
-| `getQueuedLogger`            | `get_queued_logger`|
+| Old (Removed in 2.0.0)       | New                         |
+|------------------------------|-----------------------------|
+| `configureLogging`           | `configure_logging`         |
+| `getLogger`                  | `get_logger`                |
+| `getQueuedLogger`            | `get_queued_logger`         |
 | `handleQueuedLogRecords`     | `handle_queued_log_records` |
 
 ---
 
 ## Defaults Summary
 
-| Setting          | Default                         |
-|------------------|---------------------------------|
-| Root level       | `DEBUG`                         |
-| Format           | Python's `BASIC_FORMAT`         |
-| Date format      | `%Y-%m-%dT%H:%M:%S`            |
-| Console handler  | Yes (if no handlers configured) |
-| Bidi support     | `True` (if `python-bidi` installed) |
-| File max_size    | `4MiB`                          |
-| File max_count   | `10`                            |
-| File path        | `logs/`                         |
-| File name        | `\<level\>\<date\>.log`         |
+| Setting          | Default                              |
+|------------------|--------------------------------------|
+| Root level       | `DEBUG`                              |
+| Format           | Python's `BASIC_FORMAT`              |
+| Date format      | `%Y-%m-%dT%H:%M:%S`                  |
+| Console handler  | Yes (if no handlers configured)      |
+| Bidi support     | `True` (if `python-bidi` installed)  |
+| File max_size    | `4MiB`                               |
+| File max_count   | `10`                                 |
+| File path        | `logs/`                              |
+| File name        | `\<level\>\<date\>.log`              |

@@ -22,11 +22,11 @@ release = f'{__version__}'
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = [
-    'sphinx_design',
     'sphinx.ext.autodoc',
     'sphinx.ext.autosummary',       # nice summary tables
     'sphinx.ext.intersphinx',
-    'sphinx_autodoc_typehints'     # type-hint rendering
+    'sphinx_autodoc_typehints',     # type-hint rendering
+    'sphinx_design'
 ]
 
 autosummary_generate: list[str] = []  # we use automodule in our RST files, not autosummary stubs
@@ -40,6 +40,9 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 html_theme = 'furo'
 html_title = "hanaro&nbsp;<span style='font-size: small'>(하나로)</span><br><span style='font-size: x-small'>..a non-invasive `logging` configurator.</span>"
 html_static_path = ['_static']
+html_css_files = [
+    'custom.css',
+]
 html_theme_options = {
     'analytics_anonymize_ip': False,
     'logo_only': False,
@@ -52,7 +55,8 @@ html_theme_options = {
     'sticky_navigation': True,
     'navigation_depth': 3,
     'includehidden': True,
-    'titles_only': True
+    'titles_only': True,
+    'footer_items': [],
 }
 
 

@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: © 2026 Shaun Wilson
 # SPDX-License-Identifier: MIT
 
-from .ExampleCustomHandler import ExampleCustomHandler
+from .example_custom_handler import ExampleCustomHandler
 
 
 __all__ = [

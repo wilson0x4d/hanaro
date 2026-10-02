@@ -8,6 +8,7 @@ Overview
 
    Overview <self>
    Quick Start <quickstart>
+   Configuration <configuration>
    Reference <ref/index>
    SKILL.md <SKILL>
    MIT License <license>

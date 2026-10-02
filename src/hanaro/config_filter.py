@@ -7,9 +7,19 @@ from typing import Any, Optional, cast
 
 
 class _ConfigFilterSettings:
-    """Represent :class:``ConfigFilter`` settings."""
+    """
+    Internal settings container for :class:``ConfigFilter``.
+
+    Usage
+    -----
+
+    .. code-block:: python
+
+        settings = _ConfigFilterSettings('source', {'level': 'DEBUG'})
+    """
 
     __slots__ = ['level', 'pattern', 'regex', 'source']
+
     level: int
     pattern: re.Pattern[str] | None
     regex: bool
@@ -28,7 +38,17 @@ class _ConfigFilterSettings:
 
 
 class ConfigFilter(logging.Filter):
-    """Filter out unwanted logging output via configuration."""
+    """
+    Filter out unwanted logging output via configuration.
+
+    Usage
+    -----
+
+    .. code-block:: python
+
+        f = ConfigFilter('my_filter', {'my_logger': {'level': 'WARNING'}})
+        logger.addFilter(f)
+    """
 
     def __init__(self, name: str = '', config: Optional[dict[str, dict[str, Any]]] = None) -> None:
         """
@@ -46,6 +66,12 @@ class ConfigFilter(logging.Filter):
         super().__init__(name)
 
     def filter(self, record: logging.LogRecord) -> bool:
+        """
+        Filter the specified Log Record based on configured settings.
+
+        :param record: The Log Record to filter.
+        :returns: ``True`` if the record should be emitted, ``False`` otherwise.
+        """
         for e in self.__settings:
             is_match = (
                 record.name == e.source

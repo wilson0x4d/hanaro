@@ -2,9 +2,9 @@
 # SPDX-FileCopyrightText: © 2025 Shaun Wilson
 # SPDX-License-Identifier: MIT
 
-from .ConfigFilter import ConfigFilter
-from .ContextInjectionFilter import ContextInjectionFilter
-from .QueuedHandler import QueuedHandler
+from .config_filter import ConfigFilter
+from .context_injection_filter import ContextInjectionFilter
+from .queued_handler import QueuedHandler
 from . import utils, formatters
 from .utils import (
     configure_handler,
@@ -12,12 +12,7 @@ from .utils import (
     get_logger,
     get_queued_logger,
     handle_queued_log_records,
-    patch_logging,
-    # deprecated exports (since 1.0.0)
-    configureLogging,
-    getLogger,
-    getQueuedLogger,
-    handleQueuedLogRecords
+    patch_logging
 )
 
 
@@ -35,10 +30,5 @@ __all__ = [
     'get_logger',
     'get_queued_logger',
     'handle_queued_log_records',
-    'patch_logging',
-    # deprecated exports (since 1.0.0)
-    'configureLogging',
-    'getLogger',
-    'getQueuedLogger',
-    'handleQueuedLogRecords'
+    'patch_logging'
 ]

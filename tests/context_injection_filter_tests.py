@@ -3,12 +3,14 @@
 
 import logging
 from punit import fact
-from hanaro import ContextInjectionFilter
+from hanaro.context_injection_filter import ContextInjectionFilter
 
 
 @fact
 def injects_context_values_into_logrecord() -> None:
-    """Assert :class:``ContextInjectionFilter`` injects context values into Log Records."""
+    """
+    Assert :py:class:``ContextInjectionFilter`` injects context values into Log Records.
+    """
     record = logging.LogRecord('name', 3, 'pathname', 5, 'msg', None, None, None, None)
     filter = ContextInjectionFilter({
         'foo': 'bar',
@@ -25,7 +27,9 @@ def injects_context_values_into_logrecord() -> None:
 
 @fact
 def injects_context_values_into_logrecord_as_metadata() -> None:
-    """Assert :class:``ContextInjectionFilter`` injects context values into Log Records as a 'metadata' attribute."""
+    """
+    Assert :py:class:``ContextInjectionFilter`` injects context values into Log Records as a 'metadata' attribute.
+    """
     record = logging.LogRecord('name', 3, 'pathname', 5, 'msg', None, None, None, None)
     filter = ContextInjectionFilter({
         'foo': 'bar',
@@ -44,7 +48,9 @@ def injects_context_values_into_logrecord_as_metadata() -> None:
 
 @fact
 def replaces_existing_attributes() -> None:
-    """Assert :class:``ContextInjectionFilter`` replaces attributes in Log Record even if they already exist."""
+    """
+    Assert :py:class:``ContextInjectionFilter`` replaces attributes in Log Record even if they already exist.
+    """
     record: logging.LogRecord = logging.LogRecord('name', 3, 'pathname', 5, 'msg', None, None, None, None)
     # first filter
     filter1 = ContextInjectionFilter({
@@ -86,7 +92,9 @@ def replaces_existing_attributes() -> None:
 
 @fact
 def enter_returns_self() -> None:
-    """Assert :meth:``__enter__`` returns the filter instance itself."""
+    """
+    Assert :py:meth:``__enter__`` returns the filter instance itself.
+    """
     with ContextInjectionFilter({'key': 'val'}) as ctx:
         assert ctx is not None
         assert isinstance(ctx, ContextInjectionFilter)
@@ -94,14 +102,18 @@ def enter_returns_self() -> None:
 
 @fact
 def no_context_active_before_enter() -> None:
-    """Assert no ContextInjectionFilter is active before any context manager is entered."""
+    """
+    Assert no ContextInjectionFilter is active before any context manager is entered.
+    """
     from hanaro.utils import _CIF_contextvar
     assert _CIF_contextvar.get() is None
 
 
 @fact
 def context_is_active_within_with_block() -> None:
-    """Assert the ContextInjectionFilter is the active context inside a with block."""
+    """
+    Assert the ContextInjectionFilter is the active context inside a with block.
+    """
     from hanaro.utils import _CIF_contextvar
     f = ContextInjectionFilter({'foo': 'bar'})
     with f:
@@ -110,7 +122,9 @@ def context_is_active_within_with_block() -> None:
 
 @fact
 def context_is_cleared_after_exit() -> None:
-    """Assert the active context is restored to None after __exit__."""
+    """
+    Assert the active context is restored to None after :py:meth:``__exit__``.
+    """
     from hanaro.utils import _CIF_contextvar
     f = ContextInjectionFilter({'foo': 'bar'})
     with f:
@@ -120,7 +134,9 @@ def context_is_cleared_after_exit() -> None:
 
 @fact
 def get_logger_in_context_attaches_filter() -> None:
-    """Assert get_logger() attaches the active ContextInjectionFilter to the returned logger."""
+    """
+    Assert :py:func:``get_logger()`` attaches the active ContextInjectionFilter to the returned logger.
+    """
     import hanaro
     hanaro.configure_logging({'logging': {'handlers': [{'type': 'console'}]}})
     f = ContextInjectionFilter({'foo': 'bar'})
@@ -132,7 +148,9 @@ def get_logger_in_context_attaches_filter() -> None:
 
 @fact
 def get_logger_outside_context_has_no_extra_filter() -> None:
-    """Assert get_logger() does not attach a ContextInjectionFilter when no context is active."""
+    """
+    Assert :py:func:``get_logger()`` does not attach a ContextInjectionFilter when no context is active.
+    """
     import hanaro
     hanaro.configure_logging({'logging': {'handlers': [{'type': 'console'}]}})
     logger = hanaro.get_logger('test_no_context')
@@ -142,7 +160,9 @@ def get_logger_outside_context_has_no_extra_filter() -> None:
 
 @fact
 def nested_contexts_inner_has_inner_filter() -> None:
-    """Assert nested context managers — inner scope has inner filter, outer scope has outer filter."""
+    """
+    Assert nested context managers — inner scope has inner filter, outer scope has outer filter.
+    """
     import hanaro
     hanaro.configure_logging({'logging': {'handlers': [{'type': 'console'}]}})
     from hanaro.utils import _CIF_contextvar
@@ -163,7 +183,9 @@ def nested_contexts_inner_has_inner_filter() -> None:
 
 @fact
 def log_record_receives_context_values() -> None:
-    """Assert a LogRecord obtained via get_logger() inside a context receives injected values."""
+    """
+    Assert a LogRecord obtained via :py:func:``get_logger()`` inside a context receives injected values.
+    """
     import hanaro
     hanaro.configure_logging({'logging': {'handlers': [{'type': 'console'}]}})
     f = ContextInjectionFilter({'request_id': 'abc-123'})
@@ -182,7 +204,9 @@ def log_record_receives_context_values() -> None:
 
 @fact
 def attached_filter_is_same_instance() -> None:
-    """Assert the filter attached to the logger is the same instance from the context."""
+    """
+    Assert the filter attached to the logger is the same instance from the context.
+    """
     import hanaro
     hanaro.configure_logging({'logging': {'handlers': [{'type': 'console'}]}})
     f = ContextInjectionFilter({'key': 'val'})
@@ -194,7 +218,9 @@ def attached_filter_is_same_instance() -> None:
 
 @fact
 def configure_logging_unchanged_by_context_manager() -> None:
-    """Assert context manager usage does not interfere with configure_logging's handler-level filter."""
+    """
+    Assert context manager usage does not interfere with :py:func:``configure_logging``'s handler-level filter.
+    """
     import hanaro
     hanaro.configure_logging({'logging': {'handlers': [{'type': 'console'}]}})
     root = logging.getLogger()

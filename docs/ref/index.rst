@@ -2,13 +2,7 @@ Reference
 =========
 
 .. toctree::
-    :titlesonly:
-    :maxdepth: 1
+    :maxdepth: 2
 
-    ConfigFilter <ConfigFilter>
-    ContextInjectionFilter <ContextInjectionFilter>
-    QueuedHandler <QueuedHandler>
-    formatters.* <formatters/index>
-    utils.* <utils>
-
-.. automodule:: hanaro
+    hanaro.utils <utils>
+    hanaro.* <hanaro>

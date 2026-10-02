@@ -1,6 +1,6 @@
 #!/bin/bash
-# SPDX-FileCopyrightText: © 2023 Shaun Wilson
-# SPDX-License-Identifier: LicenseRef-Proprietary
+# SPDX-FileCopyrightText: © 2026 Shaun Wilson
+# SPDX-License-Identifier: MIT
 ##
 # Git pre-push hook — runs .scripts/run-tests before allowing a push.
 # If the test script exits non-zero, the push is rejected.

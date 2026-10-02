@@ -1,16 +1,5 @@
-ContextInjectionFilter
-======================
-
-Facilitates injecting attributes into logging Records.
-
-.. py:currentmodule:: hanaro
-
-.. py:class:: ContextInjectionFilter(context, is_metadata, metadataName)
-    :canonical: hanaro.ContextInjectionFilter
-
-    :param dict[str,str] context: The context to be injected. Each key of the dictionary representing one attribute to be injected into logging Records.
-    :param bool is_metadata: (OPTIONAL) Indicates that the context should be aggregated into a single ``metadata`` attribute. Default is ``False``.
-    :param str metadataName: (OPTIONAL) The name of the "metadata" attribute. Default is ``metadata``.
+Context Injection of Metadata
+=============================
 
 What is the ``metadata`` attribute?
 -----------------------------------
